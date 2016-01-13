@@ -300,8 +300,22 @@ def supplier_contract():
 
     # Exp WH code must be found in Warehouse Master and match with TTC Office Code
     def supplier_contract_warehouse_code(cell_row, cell_col, new_mod):
-        print ('Warehouse Code check --- Warning')
-        update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)[:2], 'Please check if registered in Warehouse Master, match with TTC Office Code')
+        warehouse_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+
+        warehouse_code_list = []
+        for row in range(9, selected['backup_6'].sheet_by_index(0).nrows):
+            warehouse_code_list.append(selected['backup_6'].sheet_by_index(0).cell_value(row, 9))
+
+        if warehouse_code in warehouse_code_list:
+            if warehouse_code[:2] == master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)[:2]:
+                print ('Warehouse Code check --- Pass')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', warehouse_code, master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)[:2], 'Warehouse Code registered before in Supplier Contract Master, match with Supplier Code')
+            else:
+                print ('Warehouse Code check --- Fail')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', warehouse_code, master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)[:2], 'Warehouse Code does not match with Supplier Code')
+        else:
+            print ('Warehouse Code check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', warehouse_code, 'NA', 'Warehouse Code not registered before in Supplier Contract Master, please check Warehouse Master on user screen')
 
     # Sub Supplier Code only for TH-TBAS
     def supplier_contract_sub_supplier(cell_row, cell_col, new_mod):
