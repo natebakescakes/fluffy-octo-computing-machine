@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Added extra check for MOD Customer/Supplier Parts - Raise error if part has already been discontinued
 - Added extra logic in Container Group: Container Type check to see if Container Type already registered before
 - Added extra logic in Module Group: WH Code check to see if WH Code already registered before
+- Added extra logic in Part Master: WEST Fields to consider multiple Imp/Exp Country scenario.
 
 ### Fixed
 - Fixed error in Customer Parts: Imp HS Code logic to show PASS for <same as exp>
