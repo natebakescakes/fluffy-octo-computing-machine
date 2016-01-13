@@ -1,9 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.0.3a] - TBA
+### Added
+- Added extra logic in Supplier Contract: WH Code check to see if WH Code already registered before
 
-## [1.0.3] - TBA
+### Fixed
+- Fixed false positive in Module Group Code check for IN codes
+
+## [1.0.3] - 2016-01-13
 ### Added
 - Added ability to reference .xlsx for Global Master check
 - Added ability to reference post-update GM in Results Folder (only .xlsx)
@@ -16,7 +21,7 @@ All notable changes to this project will be documented in this file.
 - Added extra check for MOD Customer/Supplier Parts - Raise error if part has already been discontinued
 - Added extra logic in Container Group: Container Type check to see if Container Type already registered before
 - Added extra logic in Module Group: WH Code check to see if WH Code already registered before
-- Added extra logic in Part Master: WEST Fields to consider multiple Imp/Exp Country scenario.
+- Added extra logic in Part Master: WEST Fields to consider multiple Imp/Exp Country scenario
 
 ### Fixed
 - Fixed error in Customer Parts: Imp HS Code logic to show PASS for <same as exp>

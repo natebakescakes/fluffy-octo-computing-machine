@@ -197,11 +197,15 @@ def module_group():
             print ('Module Group Code check 1 --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', PRIMARY_KEY_1, ', '.join(discrepancy_reference), 'Module Group Code already exists in system')
 
-        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col)[:2] == master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2) and len(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)[2:]) == 3:
+        import_country = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)
+        if any(import_country == x for x in ('I1', 'I2', 'I3')):
+            import_country = 'IN'
+
+        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col)[:2] == import_country and len(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)[2:]) == 3:
             try:
                 int_transform = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)[2:])
                 print ('Module Group Code check 2 --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', PRIMARY_KEY_1, int_transform, 'Module Group Code in correct format and match Imp Country')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', PRIMARY_KEY_1, import_country + ', ' + str(int_transform), 'Module Group Code in correct format and match Imp Country')
             except ValueError:
                 print ('Module Group Code check 2 --- Fail')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', PRIMARY_KEY_1, 'NA', 'Incorrect format: ImpCtry(2)Number(3), e.g. MY012')
