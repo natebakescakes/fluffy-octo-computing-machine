@@ -1,5 +1,19 @@
-import build_out, customer_contract_details, supplier_parts, customer_parts, ttc_parts, inner_packing_bom, module_group, customer_contract, supplier_contract, ttc_contract, container_group
-import customer_parts_old, supplier_parts_old
+# Checking Modules
+import customer_contract
+import supplier_contract
+import ttc_contract
+import container_group
+import module_group
+import ttc_parts
+import customer_contract_details
+import supplier_parts
+import customer_parts
+import inner_packing_bom
+import build_out
+
+# Soon to be deprecated modules
+import customer_parts_old
+import supplier_parts_old
 
 # function to select proper master check
 def master_check(master):
