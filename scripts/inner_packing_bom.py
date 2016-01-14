@@ -3,11 +3,8 @@ import pandas as pd
 from os import listdir
 
 # Customer Parts - Open required workbooks and check against
-def inner_packing_bom():
-    from main_workbook import master_files
-    from main_workbook import path
-
-    # Dictionary of columns
+def inner_packing_bom(master_files, path):
+# Dictionary of columns
     columns = {
         0: "NEW",
         1: "Exp WH Code",

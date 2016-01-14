@@ -1,9 +1,8 @@
 import xlrd, sys, xlsxwriter, os
 import pandas as pd
-from os import listdir, getcwd
-from os.path import join, dirname, abspath, isfile
 from open_dialog import open_dialog
 from master_check import master_check, master_check_old
+from optparse import OptionParser
 
 SHEET_NAMES = [
     'TNM_IMP_BUILDOUT',
@@ -70,14 +69,30 @@ def results_format(writer):
     return writer
 
 # Automatic checking of all worksheets:
-def main_workbook_all_check():
-    global path
+if __name__ == "__main__":
+
+    parser = OptionParser()
+    parser.set_defaults(check_all=True, old_new=True)
+    parser.add_option("-s", "--single",
+                      action="store_false", dest="check_all",
+                      help="Check a single master sheet, default is all sheets")
+    parser.add_option("-o", "--old",
+                      action="store_false", dest="old_new",
+                      help="Set master type to be before Non-Englih and Next SRBQ Apply Date ARS")
+
+    (options, args) = parser.parse_args()
+
     path = open_dialog()
 
-    if len(listdir(path + '\\1) Submit')) == 0:
+    if path == '':
+        print ('You haven\'t selected a file.')
+        os.system('pause')
+        sys.exit()
+
+    if len(os.listdir(os.path.join(path, '1) Submit'))) == 0:
         print ('The folder \'1) Submit\' is empty!')
     else:
-        for i, filename in enumerate(listdir(path + '\\1) Submit')):
+        for i, filename in enumerate(os.listdir(path + '\\1) Submit')):
             if filename.endswith('.xls') or filename.endswith('.XLS'):
                 try:
                     print ('%d: %s' % (i, filename))
@@ -85,11 +100,9 @@ def main_workbook_all_check():
                     print ('%d: [Filename contains non-ASCII characters]' % i)
 
         index = input('Enter index of file you wish to access: ')
-        master_files['xl_workbook'] = xlrd.open_workbook(path + '\\1) Submit\\' + listdir(path + '\\1) Submit')[int(index)], formatting_info=True)
+        master_files['xl_workbook'] = xlrd.open_workbook(path + '\\1) Submit\\' + os.listdir(path + '\\1) Submit')[int(index)], formatting_info=True)
 
-        check_all = input('Would you like to check all worksheets? (Y/N) ')
-        if check_all.upper() == 'Y':
-            old_new = input('Is this after the Non-English and Next SRBQ Apply Date ARS? (Y/N) ')
+        if options.check_all:
 
             # Check whether valid sheet name input
             for sheet_name in master_files['xl_workbook'].sheet_names():
@@ -109,16 +122,19 @@ def main_workbook_all_check():
                     master_type = master_files['xl_sheet_main'].cell_value(rowx=1, colx=0)
 
                 print ('Checking %s' % master_type)
-                if old_new == 'Y':
-                    df = master_check(master_type)
-                elif old_new == 'N':
-                    df = master_check_old(master_type)
+
+                if options.old_new:
+                    df = master_check(master_type, master_files, path)
+                else:
+                    df = master_check_old(master_type, master_files, path)
 
                 # Increment row value by 1 to align with excel rows
                 if df is not None:
                     df['Row'] += 1
                 else:
-                    return
+                    print ('Something went wrong with the master check module')
+                    os.system('pause')
+                    sys.exit()
 
                 # Modify label of CCD
                 if master_type == 'Customer Contract Parts Master':
@@ -143,3 +159,7 @@ def main_workbook_all_check():
             index = input('Enter index of sheet you wish to check: ')
             master_files['xl_sheet_main'] = master_files['xl_workbook'].sheet_by_index(int(index))
             print('You have selected sheet: %s' % xl_sheet.name)
+
+        print ('Master Check Complete')
+        os.system('pause')
+        sys.exit()

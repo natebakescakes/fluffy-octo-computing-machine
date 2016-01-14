@@ -3,9 +3,7 @@ import pandas as pd
 from os import listdir, getcwd
 
 # Build-out - Open required workbooks and check against
-def build_out():
-    from main_workbook import master_files
-    from main_workbook import path
+def build_out(master_files, path):
 
     # Dictionary of columns
     columns = {

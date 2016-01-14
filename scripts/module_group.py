@@ -3,10 +3,7 @@ import pandas as pd
 from os import listdir
 
 # Module Group - Open required workbooks and check against
-def module_group():
-    from main_workbook import master_files
-    from main_workbook import path
-
+def module_group(master_files, path):
     # Dictionary of columns
     columns = {
         0: "NEW/MOD",

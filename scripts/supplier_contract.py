@@ -2,11 +2,10 @@ import xlrd, time
 import pandas as pd
 from os import listdir
 
+from west_data import west_export
+
 # Supplier Contract - Open required workbooks and check against
-def supplier_contract():
-    from main_workbook import master_files
-    from main_workbook import path
-    from west_data import west_export
+def supplier_contract(master_files, path):
 
     # Dictionary of columns
     columns = {

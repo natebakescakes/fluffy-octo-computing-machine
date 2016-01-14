@@ -2,13 +2,11 @@ import xlrd, time
 import pandas as pd
 from os import listdir
 
-# Supplier Parts - Open required workbooks and check against
-def supplier_parts():
-    from main_workbook import master_files
-    from main_workbook import path
-    from region_master import region_master
-    from west_data import west_export
+from region_master import region_master
+from west_data import west_export
 
+# Supplier Parts - Open required workbooks and check against
+def supplier_parts(master_files, path):
     # Dictionary of columns
     columns = {
         0: "NEW/MOD",

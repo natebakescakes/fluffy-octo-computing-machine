@@ -1,12 +1,10 @@
 import xlrd, time
 import pandas as pd
 from os import listdir
+from office_master import office_master
 
 # Customer Contract Details - Open required workbooks and check against
-def customer_contract_details():
-    from main_workbook import master_files
-    from main_workbook import path
-    from office_master import office_master
+def customer_contract_details(master_files, path):
 
     # Dictionary of columns
     columns = {

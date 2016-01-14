@@ -2,12 +2,10 @@ import xlrd, time
 import pandas as pd
 from os import listdir
 
-# Container Group - Open required workbooks and check against
-def container_group():
-    from main_workbook import master_files
-    from main_workbook import path
-    from region_master import region_master
+from region_master import region_master
 
+# Container Group - Open required workbooks and check against
+def container_group(master_files, path):
     # Dictionary of columns
     columns = {
         0: "NEW/MOD",

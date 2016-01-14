@@ -16,7 +16,7 @@ import customer_parts_old
 import supplier_parts_old
 
 # function to select proper master check
-def master_check(master):
+def master_check(master, master_files, path):
     switcher = {
         'Build-out Master': build_out.build_out, # Start from row 10
         'Customer Contract Parts Master': customer_contract_details.customer_contract_details,
@@ -33,10 +33,10 @@ def master_check(master):
     # Get the function from switcher dictionary
     func = switcher.get(master, lambda: "nothing")
     # Execute the function
-    return func()
+    return func(master_files, path)
 
 # Deprecated Supplier Parts, Customer Parts
-def master_check_old(master):
+def master_check_old(master, master_files, path):
     switcher = {
         'Build-out Master': build_out.build_out, # Start from row 10
         'Customer Contract Parts Master': customer_contract_details.customer_contract_details,
@@ -53,4 +53,4 @@ def master_check_old(master):
     # Get the function from switcher dictionary
     func = switcher.get(master, lambda: "nothing")
     # Execute the function
-    return func()
+    return func(master_files, path)

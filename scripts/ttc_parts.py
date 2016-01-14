@@ -2,14 +2,12 @@ import xlrd, string, csv, time, openpyxl, os
 import pandas as pd
 from os import listdir
 
+from west_data import west_import, west_export
+
 global_master_dict = {}
 
 # Customer Parts - Open required workbooks and check against
-def ttc_parts():
-    from main_workbook import master_files
-    from main_workbook import path
-    from west_data import west_import, west_export
-
+def ttc_parts(master_files, path):
     # Dictionary of columns
     columns = {
         0: "NEW/MOD",

@@ -2,14 +2,12 @@ import xlrd, time
 import pandas as pd
 from os import listdir
 
-# TTC Contract - Open required workbooks and check against
-def ttc_contract():
-    from main_workbook import master_files
-    from main_workbook import path
-    from office_master import office_master
-    from west_data import west_import, west_export
-    from incoterms_master import incoterms_master
+from office_master import office_master
+from west_data import west_import, west_export
+from incoterms_master import incoterms_master
 
+# TTC Contract - Open required workbooks and check against
+def ttc_contract(master_files, path):
     # Dictionary of columns
     columns = {
         0: "NEW/MOD",
