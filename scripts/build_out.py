@@ -32,6 +32,31 @@ def build_out():
         16: "Build-out Master"
     }
 
+    # Print required masters for checking
+    check_dict = {
+        'NEW/MOD': [],
+        'Field': [],
+        'Row': [],
+        'Primary Key': [],
+        'Primary Key (Alt)': [],
+        'Results': [],
+        'Submitted': [],
+        'Reference': [],
+        'Reason': []
+    }
+
+    # Update df dictionary row
+    def update_df(new_mod, field, row, primary_key, primary_key_alt, results, submitted, reference, reason):
+        check_dict['NEW/MOD'].append(new_mod)
+        check_dict['Field'].append(field)
+        check_dict['Row'].append(row)
+        check_dict['Primary Key'].append(primary_key)
+        check_dict['Primary Key (Alt)'].append(primary_key_alt)
+        check_dict['Results'].append(results)
+        check_dict['Submitted'].append(submitted)
+        check_dict['Reference'].append(reference)
+        check_dict['Reason'].append(reason)
+
     def check_maximum_length(cell_row, new_mod):
         # Hard code range of columns to check
         working_columns = list(range(2, 15))
@@ -370,31 +395,6 @@ def build_out():
             update_df('MOD', 'ALL', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', str(submitted_contents), str(backup_row_contents), 'Fields are correctly coloured to indicate \'TO CHANGE\'')
 
         return True
-
-    # Print required masters for checking
-    check_dict = {
-        'NEW/MOD': [],
-        'Field': [],
-        'Row': [],
-        'Primary Key': [],
-        'Primary Key (Alt)': [],
-        'Results': [],
-        'Submitted': [],
-        'Reference': [],
-        'Reason': []
-    }
-
-    # Update df dictionary row
-    def update_df(new_mod, field, row, primary_key, primary_key_alt, results, submitted, reference, reason):
-        check_dict['NEW/MOD'].append(new_mod)
-        check_dict['Field'].append(field)
-        check_dict['Row'].append(row)
-        check_dict['Primary Key'].append(primary_key)
-        check_dict['Primary Key (Alt)'].append(primary_key_alt)
-        check_dict['Results'].append(results)
-        check_dict['Submitted'].append(submitted)
-        check_dict['Reference'].append(reference)
-        check_dict['Reason'].append(reason)
 
     print ('The following master files are required: ')
     for i, key in enumerate(required):
