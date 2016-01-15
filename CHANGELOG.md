@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Fixed false positive in Module Group Code check for IN codes
+- **BUGFIX #4** - Rewrote Module Group: Shipping Frequency check to be more accurate
 
 ## [1.0.3] - 2016-01-13
 ### Added

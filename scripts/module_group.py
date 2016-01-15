@@ -260,40 +260,92 @@ def module_group(master_files, path):
 
     # Must overlap with at least 1 ETD of Shipping Calendar Frequency
     def module_group_shipping_frequency(cell_row, cell_col, new_mod):
-        module_group_ttc_contract = {}
+        module_group_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)
+        module_shipping_frequency = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+
+        customer_contract_details = []
         for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-            module_group_ttc_contract[selected['backup_0'].sheet_by_index(0).cell_value(row, 7)] = selected['backup_0'].sheet_by_index(0).cell_value(row, 9)
+            if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code:
+                customer_contract_details.append((
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 3),
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 9)
+                ))
 
         try:
             for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
-                module_group_ttc_contract[additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7)] = additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)
+                if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'NEW':
+                    customer_contract_details.append((
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)
+                    ))
+                elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD':
+                    for entry in customer_contract_details:
+                        if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3) == entry[0] and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5) == entry[1]:
+                            customer_contract_details.remove(entry)
+                    customer_contract_details.append((
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)
+                    ))
+
         except KeyError:
             pass
 
-        ttc_contract_route = {}
+        ttc_contract_list = []
+        for entry in customer_contract_details:
+            ttc_contract_list.append(entry[2])
+
+        if len(list(set(ttc_contract_list))) > 1:
+            print ('Shipping Frequency check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, ttc_contract_list, 'Multiple TTC Contract found for Module Group Code')
+            return
+        elif len(list(set(ttc_contract_list))) == 0:
+            print ('Shipping Frequency check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, ttc_contract_list, 'Module Group does not being used in Customer Contract Details')
+            return
+
+        shipping_route = ''
         for row in range(9, selected['backup_4'].sheet_by_index(0).nrows):
-            ttc_contract_route[selected['backup_4'].sheet_by_index(0).cell_value(row, 2)] = selected['backup_4'].sheet_by_index(0).cell_value(row, 14)
+            if selected['backup_4'].sheet_by_index(0).cell_value(row, 2) == ttc_contract_list[0]:
+                shipping_route = selected['backup_4'].sheet_by_index(0).cell_value(row, 14)
 
         try:
             for row in range(9, additional['TNM_TTC_CONTRACT'].nrows):
-                ttc_contract_route[additional['TNM_TTC_CONTRACT'].cell_value(row, 2)] = additional['TNM_TTC_CONTRACT'].cell_value(row, 14)
+                if additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'NEW' and additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_list[0]:
+                    shipping_route = additional['TNM_TTC_CONTRACT'].cell_value(row, 14)
+                elif additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'MOD' and additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_list[0] and additional['TNM_TTC_CONTRACT'].cell_value(row, 14) != shipping_route:
+                    shipping_route = additional['TNM_TTC_CONTRACT'].cell_value(row, 14)
         except KeyError:
             pass
 
-        shipping_calendar = {}
-        for row in range(9, selected['backup_8'].sheet_by_index(0).nrows):
-            shipping_calendar[selected['backup_8'].sheet_by_index(0).cell_value(row, 2)] = selected['backup_8'].sheet_by_index(0).cell_value(row, 12)
-
-        try:
-            if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == shipping_calendar[ttc_contract_route[module_group_ttc_contract[master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)]]]:
-                print ('Shipping Frequency check --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), shipping_calendar[ttc_contract_route[module_group_ttc_contract[master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)]]], 'Module Group shipping frequency match with shipping frequency of last ETD of Shipping Route')
-            else:
-                print ('Shipping Frequency check --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), shipping_calendar[ttc_contract_route[module_group_ttc_contract[master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)]]], 'Module Group shipping frequency does not match with shipping frequency of last ETD of Shipping Route, please check if date overlaps with other ETDs')
-        except KeyError:
+        if shipping_route == '':
             print ('Shipping Frequency check --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'TTC Contract No. not found in System/Submitted')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, ttc_contract_list[0], 'TTC Contract cannot be found in TTC Contract Master')
+            return
+
+        shipping_calendar_frequency = ''
+        for row in range(9, selected['backup_8'].sheet_by_index(0).nrows):
+            # Loop will end with last ETD
+            if selected['backup_8'].sheet_by_index(0).cell_value(row, 2) == shipping_route:
+                shipping_calendar_frequency = selected['backup_8'].sheet_by_index(0).cell_value(row, 12)
+
+        if shipping_calendar_frequency == '':
+            print ('Shipping Frequency check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, shipping_route, 'Shipping Route cannot be found in Shipping Calendar Master')
+            return
+
+        # Split frequency into elements, convert to set
+        shipping_calendar_frequency_split = set(shipping_calendar_frequency.split(','))
+        module_shipping_frequency_split = set(module_shipping_frequency.split(','))
+
+        if len(set.intersection(shipping_calendar_frequency_split, module_shipping_frequency_split)) != 0:
+            print ('Shipping Frequency check --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_shipping_frequency, shipping_calendar_frequency, 'Module Group shipping frequency intersects with shipping frequency of last ETD of Shipping Route')
+        else:
+            print ('Shipping Frequency check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, shipping_calendar_frequency, 'Module Group shipping frequency does not intersect with shipping frequency of last ETD of Shipping Route, please check if date overlaps with other ETDs')
 
     # Must be found in Module Type Master
     def module_group_module_type(cell_row, cell_col, new_mod):
