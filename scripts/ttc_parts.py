@@ -540,7 +540,7 @@ def ttc_parts(master_files, path):
                     print ('WEST Import check --- Fail (incorrect Section)')
                     update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), west_import[imp_country[:2]]['Recommended Section'], 'Section discrepancy')
 
-                if str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(west_import[imp_country[:2]]['Material Tax Class']):
+                if str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(west_import[imp_country[:2]]['Material Tax Class']) or str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(float(west_import[imp_country[:2]]['Material Tax Class'])):
                     print ('WEST Import check --- Pass (Material Tax Class match)')
                     update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9), west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
                 else:
@@ -581,7 +581,7 @@ def ttc_parts(master_files, path):
                     print ('WEST Import check --- Fail (incorrect Section)')
                     update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), west_import[imp_country[:2]]['Recommended Section'], 'Section discrepancy (Optional for TW)')
 
-                if str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(west_import[imp_country[:2]]['Material Tax Class']):
+                if str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(west_import[imp_country[:2]]['Material Tax Class']) or str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(float(west_import[imp_country[:2]]['Material Tax Class'])):
                     print ('WEST Import check --- Pass (Material Tax Class match)')
                     update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9), west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
                 else:
