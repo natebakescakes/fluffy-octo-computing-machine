@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Fixed false positive in Module Group Code check for IN codes
 - **BUGFIX #4** - Rewrote Module Group: Shipping Frequency check to be more accurate
 - **BUGFIX #2** - Fixed false positives in TTC Parts: Material Tax Class
+- Added GM check for MOD West fields
 
 ## [1.0.3] - 2016-01-13
 ### Added

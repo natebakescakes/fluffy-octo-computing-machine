@@ -1040,7 +1040,8 @@ def ttc_parts(master_files, path):
                                 print ('%s cannot be modded' % columns[col+2])
                                 update_df('MOD', columns[col+2], row, master_files['xl_sheet_main'].cell_value(row, 2), 'NA', 'FAIL', master_files['xl_sheet_main'].cell_value(row, 2), 'NA', 'Cannot be modded')
                             # Mod: cols that require GM check
-                            if (any(col+2 == x for x in (3, 4, 5, 14))):
+                            # 2016-01-19: Added Column 8 and 15 for MOD Company Code as well
+                            if (any(col+2 == x for x in (3, 4, 5, 8, 14, 15))):
                                 if global_master_check_cycle == 0:
                                     ttc_parts_global_master(row, 2, global_master_part_no, global_master_dict, 'MOD')
                                     global_master_check_cycle += 1
