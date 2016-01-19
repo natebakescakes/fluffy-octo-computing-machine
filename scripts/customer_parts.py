@@ -1083,7 +1083,7 @@ def customer_parts(master_files, path):
                             if (any(col+2 == x for x in (14, 15, 16))):
                                 customer_parts_ip_specs(row, 14, 'MOD')
                             # Mod: IP Gross Weight
-                            if col+2 == 17:
+                            if any(col+2 == x for x in (11, 17)):
                                 customer_parts_gross_weight(row, 17, 'MOD')
                             # Mod: IP Specs Apply Date
                             if col+2 == 18:
