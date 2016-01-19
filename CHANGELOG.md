@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 - **BUGFIX #4** - Rewrote Module Group: Shipping Frequency check to be more accurate
 - **BUGFIX #2** - Fixed false positives in TTC Parts: Material Tax Class
 - Added GM check for MOD West fields
+- Added Gross Weight check for MOD Customer Parts: Next_SPQ
+- Rewrote all Shipping Frequency checks
 
 ## [1.0.3] - 2016-01-13
 ### Added

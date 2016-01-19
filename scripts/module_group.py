@@ -299,11 +299,11 @@ def module_group(master_files, path):
 
         if len(list(set(ttc_contract_list))) > 1:
             print ('Shipping Frequency check --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, ttc_contract_list, 'Multiple TTC Contract found for Module Group Code')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, list(set(ttc_contract_list)), 'Multiple TTC Contract found for Module Group Code')
             return
         elif len(list(set(ttc_contract_list))) == 0:
             print ('Shipping Frequency check --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, ttc_contract_list, 'Module Group does not being used in Customer Contract Details')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_shipping_frequency, list(set(ttc_contract_list)), 'Module Group does not being used in Customer Contract Details')
             return
 
         shipping_route = ''
@@ -313,9 +313,8 @@ def module_group(master_files, path):
 
         try:
             for row in range(9, additional['TNM_TTC_CONTRACT'].nrows):
-                if additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'NEW' and additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_list[0]:
-                    shipping_route = additional['TNM_TTC_CONTRACT'].cell_value(row, 14)
-                elif additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'MOD' and additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_list[0] and additional['TNM_TTC_CONTRACT'].cell_value(row, 14) != shipping_route:
+                # If in submitted, regardless of NEW or MOD, should replace backup
+                if additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_list[0]:
                     shipping_route = additional['TNM_TTC_CONTRACT'].cell_value(row, 14)
         except KeyError:
             pass
@@ -337,8 +336,15 @@ def module_group(master_files, path):
             return
 
         # Split frequency into elements, convert to set
-        shipping_calendar_frequency_split = set(shipping_calendar_frequency.split(','))
-        module_shipping_frequency_split = set(module_shipping_frequency.split(','))
+        try:
+            shipping_calendar_frequency_split = set(shipping_calendar_frequency.split(','))
+        except AttributeError:
+            shipping_calendar_frequency_split = {int(shipping_calendar_frequency)}
+
+        try:
+            module_shipping_frequency_split = set(module_shipping_frequency.split(','))
+        except AttributeError:
+            module_shipping_frequency_split = {str(int(module_shipping_frequency))}
 
         if len(set.intersection(shipping_calendar_frequency_split, module_shipping_frequency_split)) != 0:
             print ('Shipping Frequency check --- Pass')
