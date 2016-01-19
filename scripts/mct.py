@@ -1,7 +1,10 @@
-import xlrd, sys, xlsxwriter, os
-import pandas as pd
-
+import sys
+import os
 from optparse import OptionParser
+
+import xlrd
+import xlsxwriter
+import pandas as pd
 
 from open_dialog import open_dialog
 from master_check import master_check, master_check_old

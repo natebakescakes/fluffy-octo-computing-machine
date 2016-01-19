@@ -1,6 +1,9 @@
-import xlrd, time
-import pandas as pd
+import time
 from os import listdir
+
+import xlrd
+import pandas as pd
+
 from office_master import office_master
 
 # Customer Contract Details - Open required workbooks and check against

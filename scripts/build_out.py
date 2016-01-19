@@ -1,6 +1,8 @@
-import xlrd, time
+import time
+from os import listdir
+
+import xlrd
 import pandas as pd
-from os import listdir, getcwd
 
 # Build-out - Open required workbooks and check against
 def build_out(master_files, path):

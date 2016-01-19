@@ -1,6 +1,9 @@
-import xlrd, datetime, time
-import pandas as pd
+import time
+import datetime
 from os import listdir
+
+import xlrd
+import pandas as pd
 
 from region_master import region_master
 from west_data import west_export

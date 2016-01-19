@@ -1,6 +1,9 @@
-import xlrd, time
-import pandas as pd
+import time
 from os import listdir
+
+import xlrd
+import pandas as pd
+
 from west_data import west_import
 
 # Customer Parts - Open required workbooks and check against

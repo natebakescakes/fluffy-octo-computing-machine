@@ -1,6 +1,8 @@
-import xlrd, time
-import pandas as pd
+import time
 from os import listdir
+
+import xlrd
+import pandas as pd
 
 # Module Group - Open required workbooks and check against
 def module_group(master_files, path):

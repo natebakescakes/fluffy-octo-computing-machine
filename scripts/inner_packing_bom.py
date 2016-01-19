@@ -1,6 +1,8 @@
-import xlrd, time
-import pandas as pd
+import time
 from os import listdir
+
+import xlrd
+import pandas as pd
 
 # Customer Parts - Open required workbooks and check against
 def inner_packing_bom(master_files, path):

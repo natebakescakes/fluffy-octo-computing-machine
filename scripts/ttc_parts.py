@@ -1,6 +1,12 @@
-import xlrd, string, csv, time, openpyxl, os
-import pandas as pd
+import csv
+import os
+import string
+import time
 from os import listdir
+
+import xlrd
+import openpyxl
+import pandas as pd
 
 from west_data import west_import, west_export
 
