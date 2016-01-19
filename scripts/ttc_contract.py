@@ -426,7 +426,7 @@ def ttc_contract(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', shipping_route, module_group_code, 'Module Group Code cannot be found in Module Group Code Master')
             return
 
-        for module_group_entry in module_group_shipping_frequency:
+        for module_group_entry in list(set(module_group_shipping_frequency)):
             # Split frequency into elements, convert to set
             try:
                 shipping_calendar_frequency_split = set(shipping_calendar_frequency.split(','))
