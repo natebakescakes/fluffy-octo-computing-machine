@@ -1,21 +1,24 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.0.3c] - TBA
+### Fixed
+- Fixed Supplier Parts Master: Box Specs/M3 typecast error
+
 ## [1.0.3b] - 2016-01-19
 ### Added
 - Added extra logic in Supplier Contract: WH Code check to see if WH Code already registered before
 - Moved pre-ARS and 'Check All Master Sheets?' to option flags
-..* Run program on command line with '-h' or '--help' flag to see list of options
+⋅⋅* Run program on command line with '-h' or '--help' flag to see list of options
 - **HotFix**: Recompiled into .exe
 
 ### Fixed
 - Fixed false positive in Module Group Code check for IN codes
 - **BUGFIX #4** - Rewrote Module Group: Shipping Frequency check to be more accurate
-..* Rewrote all Shipping Frequency checks
+⋅⋅* Rewrote all Shipping Frequency checks
 - **BUGFIX #2** - Fixed false positives in TTC Parts: Material Tax Class
 - Added GM check for MOD West fields
 - Added Gross Weight check for MOD Customer Parts: Next_SPQ
-
 
 ## [1.0.3] - 2016-01-13
 ### Added

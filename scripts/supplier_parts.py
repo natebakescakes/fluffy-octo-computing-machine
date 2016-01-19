@@ -221,7 +221,7 @@ def supplier_parts(master_files, path):
         else:
             backup_row_contents = []
             for row in range(9, selected['backup_3'].sheet_by_index(0).nrows):
-                if part_and_customer_no == str(selected['backup_3'].sheet_by_index(0).cell_value(row, 2)) + selected['backup_3'].sheet_by_index(0).cell_value(row, 3):
+                if part_and_supplier_code == str(selected['backup_3'].sheet_by_index(0).cell_value(row, 2)) + selected['backup_3'].sheet_by_index(0).cell_value(row, 3):
                     for col in range(0, 20): # Hard Code column range
                         backup_row_contents.append(selected['backup_3'].sheet_by_index(0).cell_value(row, col))
 
@@ -454,9 +454,9 @@ def supplier_parts(master_files, path):
 
     # Supplier Box Specs cannot be zero
     def supplier_parts_box_specs(cell_row, cell_col, new_mod):
-        box_length = round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 3)
-        box_width = round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), 3)
-        box_height = round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), 3)
+        box_length = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)), 3)
+        box_width = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)), 3)
+        box_height = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)), 3)
 
         if box_length == 0 or box_width == 0 or box_height == 0:
             print ('Supplier Box Specs check --- Fail (LWH cannot be 0)')
@@ -470,7 +470,10 @@ def supplier_parts(master_files, path):
     def supplier_parts_box_m3(cell_row, cell_col, new_mod):
 
         # Transcribe excel formula to python
-        correct_value = round(round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3), 3) * round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2), 3) * round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1), 3), 3)
+        correct_value = round(
+                        round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3)), 3) *
+                        round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2)), 3) *
+                        round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)), 3), 3)
 
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == correct_value:
             print ("Supplier Box Specs check --- Pass (Formula Validated)")

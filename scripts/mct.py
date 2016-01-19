@@ -1,8 +1,10 @@
 import xlrd, sys, xlsxwriter, os
 import pandas as pd
+
+from optparse import OptionParser
+
 from open_dialog import open_dialog
 from master_check import master_check, master_check_old
-from optparse import OptionParser
 
 SHEET_NAMES = [
     'TNM_IMP_BUILDOUT',
