@@ -4,7 +4,7 @@ from os import listdir
 import xlrd
 import pandas as pd
 
-from office_master import office_master
+from master_data import office_master
 
 # Customer Contract Details - Open required workbooks and check against
 def customer_contract_details(master_files, path):

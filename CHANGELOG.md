@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Fixed Supplier Parts Master: Box Specs/M3 typecast error
 - Cleanup TTC Parts: WEST Field check
-- Fixed false positive in Customer Contract Details: Customer Contract check
+- **BUGFIX #5** - Fixed false positive in Customer Contract Details: Customer Contract check
 
 ## [1.0.3b] - 2016-01-19
 ### Added

@@ -4,7 +4,7 @@ from os import listdir
 import xlrd
 import pandas as pd
 
-from west_data import west_export
+from master_data import west_export
 
 # Supplier Contract - Open required workbooks and check against
 def supplier_contract(master_files, path):

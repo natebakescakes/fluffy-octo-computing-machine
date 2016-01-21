@@ -5,9 +5,9 @@ from os import listdir
 import xlrd
 import pandas as pd
 
-from office_master import office_master
-from west_data import west_import, west_export
-from incoterms_master import incoterms_master
+from master_data import office_master
+from master_data import west_import, west_export
+from master_data import incoterms_master
 
 # TTC Contract - Open required workbooks and check against
 def ttc_contract(master_files, path):

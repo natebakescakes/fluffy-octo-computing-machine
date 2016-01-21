@@ -1,12 +1,14 @@
 import sys
 import os
+import tkinter
+import datetime
 from optparse import OptionParser
+from tkinter import filedialog
 
 import xlrd
 import xlsxwriter
 import pandas as pd
 
-from open_dialog import open_dialog
 from master_check import master_check, master_check_old
 
 SHEET_NAMES = [
@@ -26,6 +28,17 @@ SHEET_NAMES = [
 
 master_files = {}
 path = ""
+
+def open_dialog():
+    tkinter.Tk().withdraw() # Close the root window
+    in_path = filedialog.askdirectory() # Choose folder
+    return in_path
+
+def results_filename():
+    case_no = os.path.basename(path)[:12] # Get case_no
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S") # time serial
+
+    return 'mctresults_%s_%s.xlsx' % (case_no, timestamp)
 
 def results_format(writer):
     # FAIL - Light red fill with dark red text
@@ -97,7 +110,7 @@ if __name__ == "__main__":
     if len(os.listdir(os.path.join(path, '1) Submit'))) == 0:
         print ('The folder \'1) Submit\' is empty!')
     else:
-        for i, filename in enumerate(os.listdir(path + '\\1) Submit')):
+        for i, filename in enumerate(os.listdir(os.path.join(path, '1) Submit'))):
             if filename.endswith('.xls') or filename.endswith('.XLS'):
                 try:
                     print ('%d: %s' % (i, filename))
@@ -105,7 +118,7 @@ if __name__ == "__main__":
                     print ('%d: [Filename contains non-ASCII characters]' % i)
 
         index = input('Enter index of file you wish to access: ')
-        master_files['xl_workbook'] = xlrd.open_workbook(path + '\\1) Submit\\' + os.listdir(path + '\\1) Submit')[int(index)], formatting_info=True)
+        master_files['xl_workbook'] = xlrd.open_workbook(os.path.join(path, '1) Submit', os.listdir(os.path.join(path, '1) Submit'))[int(index)]), formatting_info=True)
 
         if options.check_all:
 
@@ -118,7 +131,7 @@ if __name__ == "__main__":
                     os.system('pause')
                     sys.exit()
 
-            writer = pd.ExcelWriter(path + '\\results.xlsx', engine = 'xlsxwriter')
+            writer = pd.ExcelWriter(os.path.join(path, results_filename()), engine = 'xlsxwriter')
 
             for i, sheet in enumerate(master_files['xl_workbook'].sheets()):
                 master_files['xl_sheet_main'] = master_files['xl_workbook'].sheet_by_index(i)
@@ -154,7 +167,7 @@ if __name__ == "__main__":
 
             writer.save()
 
-        elif check_all.upper() == 'N':
+        else:
             # Open the workbook and retrieve worksheets
             print ('Retrieved worksheets:')
             for i, sheet in enumerate(master_files['xl_workbook'].sheets()):

@@ -5,8 +5,8 @@ from os import listdir
 import xlrd
 import pandas as pd
 
-from region_master import region_master
-from west_data import west_export
+from master_data import region_master
+from master_data import west_export
 
 # Supplier Parts - Open required workbooks and check against
 def supplier_parts(master_files, path):

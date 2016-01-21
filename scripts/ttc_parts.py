@@ -8,7 +8,7 @@ import xlrd
 import openpyxl
 import pandas as pd
 
-from west_data import west_import, west_export
+from master_data import west_import, west_export
 
 global_master_dict = {}
 

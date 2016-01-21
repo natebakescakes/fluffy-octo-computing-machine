@@ -4,7 +4,7 @@ from os import listdir
 import xlrd
 import pandas as pd
 
-from region_master import region_master
+from master_data import region_master
 
 # Container Group - Open required workbooks and check against
 def container_group(master_files, path):
