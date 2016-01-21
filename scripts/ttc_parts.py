@@ -459,164 +459,187 @@ def ttc_parts(master_files, path):
 
     # Ensure compulsory WEST fields are input for WEST Countries, NEW Customer Contract Details should be submitted for new WEST Export/Import
     def ttc_parts_west_fields(cell_row, cell_col, new_mod):
+        part_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)
+
+        exp_west_office_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+        exp_west_section = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)
+        exp_material_tax_class = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)
+        exp_availability_check_group = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3)
+        exp_purchase_group = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+4)
+
+        imp_west_office_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7)
+        imp_west_section = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8)
+        imp_material_tax_class = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)
+        imp_availability_check_group =master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10)
+        imp_purchase_group = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+11)
+
+        exp_west_fields_list = [exp_west_office_code, exp_west_section, exp_material_tax_class, exp_availability_check_group, exp_purchase_group]
+
+        imp_west_fields_list = [imp_west_office_code, imp_west_section, imp_material_tax_class, imp_availability_check_group, imp_purchase_group]
+
+        all_west_fields_list = [exp_west_office_code, exp_west_section, exp_material_tax_class, exp_availability_check_group, exp_purchase_group, imp_west_office_code, imp_west_section, imp_material_tax_class, imp_availability_check_group, imp_purchase_group]
+
         part_no_imp_exp = []
         try:
+            # Check if NEW Customer Contract Details are submitted
             for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
-                part_no_imp_exp.append((additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 4), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 11)))
+                part_no_imp_exp.append((
+                    additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                    additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 4),
+                    additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 11)
+                ))
         except KeyError:
-            if new_mod == 'NEW':
-                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'NA', 'No Customer Contract Detail submitted for NEW Part/MOD Part with NEW WEST Field')
-            else:
-                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'NA', 'No Customer Contract Detail submitted for MOD Part with NEW WEST Field')
+            update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join(all_west_fields_list), 'NA', 'No Customer Contract Detail submitted for NEW Part/MOD Part with NEW WEST Field')
 
         imp_country_list, exp_country_list = [], []
         for part_customer in part_no_imp_exp:
-            if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6) == part_customer[0]: # Sometimes there's multiple imp countries
+            if part_no == part_customer[0]: # Sometimes there's multiple imp countries
                 imp_country_list.append(part_customer[1])
                 exp_country_list.append(part_customer[2])
 
         for exp_country in exp_country_list:
             # Check if west export fields are required
             if exp_country[:2] in west_export.keys():
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == west_export[exp_country[:2]]['Office Code']:
+                if exp_west_office_code == west_export[exp_country[:2]]['Office Code']:
                     print ('WEST Export check --- Pass (Office Code match)')
-                    update_df(new_mod, columns[8], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), west_export[exp_country[:2]]['Office Code'], 'Office Code match')
+                    update_df(new_mod, columns[8], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', exp_west_office_code, west_export[exp_country[:2]]['Office Code'], 'Office Code match')
                 else:
-                    print ('WEST Export check --- Fail (Incorrect Office Code %s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[8], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), west_export[exp_country[:2]]['Office Code'], 'Office Code discrepancy')
+                    print ('WEST Export check --- Fail (Incorrect Office Code)')
+                    update_df(new_mod, columns[8], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', exp_west_office_code, west_export[exp_country[:2]]['Office Code'], 'Office Code discrepancy')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) in west_export[exp_country[:2]]['Recommended Section']:
+                if exp_west_section in west_export[exp_country[:2]]['Recommended Section']:
                     print ('WEST Export check --- Pass (Recommended Section match)')
-                    update_df(new_mod, columns[9], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), west_export[exp_country[:2]]['Recommended Section'], 'Recommended Section match')
-                elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) in west_export[exp_country[:2]]['Section']:
+                    update_df(new_mod, columns[9], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', exp_west_section, west_export[exp_country[:2]]['Recommended Section'], 'Recommended Section match')
+                elif exp_west_section in west_export[exp_country[:2]]['Section']:
                     print ('WEST Export check --- Pass (CAUTION, not recommended section)')
-                    update_df(new_mod, columns[9], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), west_export[exp_country[:2]]['Section'], 'Not recommended section')
+                    update_df(new_mod, columns[9], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', exp_west_section, west_export[exp_country[:2]]['Section'], 'Not recommended section')
                 else:
                     print ('WEST Export check --- Fail (incorrect Section)')
-                    update_df(new_mod, columns[9], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), west_export[exp_country[:2]]['Recommended Section'], 'Section discrepancy')
+                    update_df(new_mod, columns[9], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', exp_west_section, west_export[exp_country[:2]]['Recommended Section'], 'Section discrepancy')
 
-                if str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)) == str(west_export[exp_country[:2]]['Material Tax Class']) or str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)) == str(float(west_export[exp_country[:2]]['Material Tax Class'])):
+                if str(exp_material_tax_class) == str(west_export[exp_country[:2]]['Material Tax Class']) or str(exp_material_tax_class) == str(float(west_export[exp_country[:2]]['Material Tax Class'])):
                     print ('WEST Export check --- Pass (Material Tax Class match)')
-                    update_df(new_mod, columns[10], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), west_export[exp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
+                    update_df(new_mod, columns[10], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', exp_material_tax_class, west_export[exp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
                 else:
                     print ('WEST Export check --- Fail (Incorrect Material Tax Class)')
-                    update_df(new_mod, columns[10], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), west_export[exp_country[:2]]['Material Tax Class'], 'Material Tax Class discrepancy')
+                    update_df(new_mod, columns[10], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', exp_material_tax_class, west_export[exp_country[:2]]['Material Tax Class'], 'Material Tax Class discrepancy')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3) == 'Z3':
+                if exp_availability_check_group == 'Z3':
                     print ('WEST Export check --- Pass (Recommended Check Group match)')
-                    update_df(new_mod, columns[11], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), 'Z3', 'Recommended Check Group match')
-                elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3) in west_export[exp_country[:2]]['Availability Check Group']:
+                    update_df(new_mod, columns[11], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', exp_availability_check_group, 'Z3', 'Recommended Check Group match')
+                elif exp_availability_check_group in west_export[exp_country[:2]]['Availability Check Group']:
                     print ('WEST Export check --- Pass (CAUTION, not recommended check group)')
-                    update_df(new_mod, columns[11], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), west_export[exp_country[:2]]['Availability Check Group'], 'Not Recommended Check Group match')
+                    update_df(new_mod, columns[11], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', exp_availability_check_group, west_export[exp_country[:2]]['Availability Check Group'], 'Not Recommended Check Group match')
                 else:
                     print ('WEST Export check --- Fail (Incorrect Availability Check Group)')
-                    update_df(new_mod, columns[11], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), west_export[exp_country[:2]]['Availability Check Group'], 'Availability Check Group discrepancy')
+                    update_df(new_mod, columns[11], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', exp_availability_check_group, west_export[exp_country[:2]]['Availability Check Group'], 'Availability Check Group discrepancy')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+4) == west_export[exp_country[:2]]['Purchase Group']:
+                if exp_purchase_group == west_export[exp_country[:2]]['Purchase Group']:
                     print ('WEST Export check --- Pass (Purchase Group match)')
-                    update_df(new_mod, columns[12], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+4), west_export[exp_country[:2]]['Purchase Group'], 'Purchase Group match')
+                    update_df(new_mod, columns[12], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', exp_purchase_group, west_export[exp_country[:2]]['Purchase Group'], 'Purchase Group match')
                 else:
                     print ('WEST Export check --- Fail (Incorrect Purchase Group)')
-                    update_df(new_mod, columns[12], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+4), west_export[exp_country[:2]]['Purchase Group'], 'Purchase Group discrepancy')
+                    update_df(new_mod, columns[12], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', exp_purchase_group, west_export[exp_country[:2]]['Purchase Group'], 'Purchase Group discrepancy')
             else:
-                if (all(field == '' for field in [master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+4)])):
+                if (all(field == '' for field in exp_west_fields_list)):
                     print ('WEST Export check --- Pass (All fields blank)')
-                    update_df(new_mod, 'WEST Fields (Exp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), exp_country[:2], 'All fields blank')
+                    update_df(new_mod, 'WEST Fields (Exp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join(exp_west_fields_list), exp_country[:2], 'All fields blank')
                 else:
                     print ('WEST Export check --- Warning (fields should be blank)')
-                    update_df(new_mod, 'WEST Fields (Exp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), exp_country[:2], 'WEST fields should be blank for this Export Country. If multiple Export Countries, please check if one of them pertains to this WEST field')
+                    update_df(new_mod, 'WEST Fields (Exp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', ', '.join(exp_west_fields_list), exp_country[:2], 'WEST fields should be blank for this Export Country. If multiple Export Countries, please ensure that one of them pertains to this WEST field')
 
         for imp_country in imp_country_list:
             # Check if west import fields are required
             if imp_country[:2] in west_import.keys() and imp_country[:2] != 'TW':
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7) == west_import[imp_country[:2]]['Office Code']:
+                if imp_west_office_code == west_import[imp_country[:2]]['Office Code']:
                     print ('WEST Import check --- Pass (Office Code match)')
-                    update_df(new_mod, columns[15], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7), west_import[imp_country[:2]]['Office Code'], 'Office Code match')
+                    update_df(new_mod, columns[15], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_west_office_code, west_import[imp_country[:2]]['Office Code'], 'Office Code match')
                 else:
-                    print ('WEST Import check --- Fail (Incorrect Office Code %s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7))
-                    update_df(new_mod, columns[15], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7), west_import[imp_country[:2]]['Office Code'], 'Office Code discrepancy')
+                    print ('WEST Import check --- Fail')
+                    update_df(new_mod, columns[15], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', imp_west_office_code, west_import[imp_country[:2]]['Office Code'], 'Office Code discrepancy')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8) in west_import[imp_country[:2]]['Recommended Section']:
+                if imp_west_section in west_import[imp_country[:2]]['Recommended Section']:
                     print ('WEST Import check --- Pass (Recommended Section match)')
-                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), west_import[imp_country[:2]]['Recommended Section'], 'Recommended Section match')
-                elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8) in west_import[imp_country[:2]]['Section']:
+                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_west_section, west_import[imp_country[:2]]['Recommended Section'], 'Recommended Section match')
+                elif imp_west_section in west_import[imp_country[:2]]['Section']:
                     print ('WEST Import check --- Pass (CAUTION, not recommended section)')
-                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), west_import[imp_country[:2]]['Recommended Section'], 'Not recommended section')
+                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_west_section, west_import[imp_country[:2]]['Recommended Section'], 'Not recommended section')
                 else:
                     print ('WEST Import check --- Fail (incorrect Section)')
-                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), west_import[imp_country[:2]]['Recommended Section'], 'Section discrepancy')
+                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', imp_west_section, west_import[imp_country[:2]]['Recommended Section'], 'Section discrepancy')
 
-                if str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(west_import[imp_country[:2]]['Material Tax Class']) or str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(float(west_import[imp_country[:2]]['Material Tax Class'])):
+                if str(imp_material_tax_class) == str(west_import[imp_country[:2]]['Material Tax Class']) or str(mimp_material_tax_class) == str(float(west_import[imp_country[:2]]['Material Tax Class'])):
                     print ('WEST Import check --- Pass (Material Tax Class match)')
-                    update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9), west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
+                    update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_material_tax_class, west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
                 else:
                     print ('WEST Import check --- Fail (Incorrect Material Tax Class)')
-                    update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9), west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class discrepancy')
+                    update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', imp_material_tax_class, west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class discrepancy')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10) == 'Z3':
+                if imp_availability_check_group == 'Z3':
                     print ('WEST Import check --- Pass (Recommended Check Group match)')
-                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'Z3', 'Recommended Check Group match')
-                elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10) in west_import[imp_country[:2]]['Availability Check Group']:
+                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_availability_check_group, 'Z3', 'Recommended Check Group match')
+                elif imp_availability_check_group in west_import[imp_country[:2]]['Availability Check Group']:
                     print ('WEST Import check --- Pass (CAUTION, not recommended check group)')
-                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), west_import[imp_country[:2]]['Availability Check Group'], 'Not Recommended Check Group match')
+                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_availability_check_group, west_import[imp_country[:2]]['Availability Check Group'], 'Not Recommended Check Group match')
                 else:
                     print ('WEST Import check --- Fail (Incorrect Availability Check Group)')
-                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), west_import[imp_country[:2]]['Availability Check Group'], 'Availability Check Group discrepancy')
+                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', imp_availability_check_group, west_import[imp_country[:2]]['Availability Check Group'], 'Availability Check Group discrepancy')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+11) == west_import[imp_country[:2]]['Purchase Group']:
+                if imp_purchase_group == west_import[imp_country[:2]]['Purchase Group']:
                     print ('WEST Import check --- Pass (Purchase Group match)')
-                    update_df(new_mod, columns[19], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+11), west_import[imp_country[:2]]['Purchase Group'], 'Purchase Group match')
+                    update_df(new_mod, columns[19], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_purchase_group, west_import[imp_country[:2]]['Purchase Group'], 'Purchase Group match')
                 else:
                     print ('WEST Import check --- Fail (Incorrect Purchase Group)')
-                    update_df(new_mod, columns[19], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+11), west_import[imp_country[:2]]['Purchase Group'], 'Purchase Group discrepancy')
+                    update_df(new_mod, columns[19], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', imp_purchase_group, west_import[imp_country[:2]]['Purchase Group'], 'Purchase Group discrepancy')
+
             elif imp_country[:2] == 'TW':
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7) == west_import[imp_country[:2]]['Office Code']:
+                if imp_west_office_code == west_import[imp_country[:2]]['Office Code']:
                     print ('WEST Import check --- Pass (Office Code match)')
-                    update_df(new_mod, columns[15], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7), west_import[imp_country[:2]]['Office Code'], 'Office Code match')
+                    update_df(new_mod, columns[15], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_west_office_code, west_import[imp_country[:2]]['Office Code'], 'Office Code match')
                 else:
                     print ('WEST Import check --- Fail (Incorrect Office Code %s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7))
-                    update_df(new_mod, columns[15], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7), west_import[imp_country[:2]]['Office Code'], 'Office Code discrepancy (Optional for TW)')
+                    update_df(new_mod, columns[15], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_west_office_code, west_import[imp_country[:2]]['Office Code'], 'Office Code discrepancy (Optional for TW)')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8) in west_import[imp_country[:2]]['Recommended Section']:
+                if imp_west_section in west_import[imp_country[:2]]['Recommended Section']:
                     print ('WEST Import check --- Pass (Recommended Section match)')
-                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), west_import[imp_country[:2]]['Recommended Section'], 'Recommended Section match')
-                elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8) in west_import[imp_country[:2]]['Section']:
+                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_west_section, west_import[imp_country[:2]]['Recommended Section'], 'Recommended Section match')
+                elif imp_west_section in west_import[imp_country[:2]]['Section']:
                     print ('WEST Import check --- Pass (CAUTION, not recommended section)')
-                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), west_import[imp_country[:2]]['Recommended Section'], 'Not recommended section')
+                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_west_section, west_import[imp_country[:2]]['Recommended Section'], 'Not recommended section')
                 else:
                     print ('WEST Import check --- Fail (incorrect Section)')
-                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), west_import[imp_country[:2]]['Recommended Section'], 'Section discrepancy (Optional for TW)')
+                    update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_west_section, west_import[imp_country[:2]]['Recommended Section'], 'Section discrepancy (Optional for TW)')
 
-                if str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(west_import[imp_country[:2]]['Material Tax Class']) or str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9)) == str(float(west_import[imp_country[:2]]['Material Tax Class'])):
+                if str(imp_material_tax_class) == str(west_import[imp_country[:2]]['Material Tax Class']) or str(imp_material_tax_class) == str(float(west_import[imp_country[:2]]['Material Tax Class'])):
                     print ('WEST Import check --- Pass (Material Tax Class match)')
-                    update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9), west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
+                    update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_material_tax_class, west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
                 else:
                     print ('WEST Import check --- Fail (Incorrect Material Tax Class)')
-                    update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9), west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class discrepancy (Optional for TW)')
+                    update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_material_tax_class, west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class discrepancy (Optional for TW)')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10) == 'Z3':
+                if imp_availability_check_group == 'Z3':
                     print ('WEST Import check --- Pass (Recommended Check Group match)')
-                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'Z3', 'Recommended Check Group match')
-                elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10) in west_import[imp_country[:2]]['Availability Check Group']:
+                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_availability_check_group, 'Z3', 'Recommended Check Group match')
+                elif imp_availability_check_group in west_import[imp_country[:2]]['Availability Check Group']:
                     print ('WEST Import check --- Pass (CAUTION, not recommended check group)')
-                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), west_import[imp_country[:2]]['Availability Check Group'], 'Not Recommended Check Group match (Optional for TW)')
+                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_availability_check_group, west_import[imp_country[:2]]['Availability Check Group'], 'Not Recommended Check Group match (Optional for TW)')
                 else:
                     print ('WEST Import check --- Fail (Incorrect Availability Check Group)')
-                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), west_import[imp_country[:2]]['Availability Check Group'], 'Availability Check Group discrepancy (Optional for TW)')
+                    update_df(new_mod, columns[18], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_availability_check_group, west_import[imp_country[:2]]['Availability Check Group'], 'Availability Check Group discrepancy (Optional for TW)')
 
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+11) == west_import[imp_country[:2]]['Purchase Group']:
+                if imp_purchase_group == west_import[imp_country[:2]]['Purchase Group']:
                     print ('WEST Import check --- Pass (Purchase Group match)')
-                    update_df(new_mod, columns[19], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+11), west_import[imp_country[:2]]['Purchase Group'], 'Purchase Group match')
+                    update_df(new_mod, columns[19], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_purchase_group, west_import[imp_country[:2]]['Purchase Group'], 'Purchase Group match')
                 else:
                     print ('WEST Import check --- Fail (Incorrect Purchase Group)')
-                    update_df(new_mod, columns[19], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+11), west_import[imp_country[:2]]['Purchase Group'], 'Purchase Group discrepancy (Optional for TW)')
+                    update_df(new_mod, columns[19], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', imp_purchase_group, west_import[imp_country[:2]]['Purchase Group'], 'Purchase Group discrepancy (Optional for TW)')
             else:
-                if (all(field == '' for field in [master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+11)])):
+                if (all(field == '' for field in imp_west_fields_list)):
                     print ('WEST Import check --- Pass (All fields blank)')
-                    update_df(new_mod, 'WEST Fields (Imp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), imp_country[:2], 'All fields blank')
+                    update_df(new_mod, 'WEST Fields (Imp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join(imp_west_fields_list), imp_country[:2], 'All fields blank')
                 else:
                     print ('WEST Import check --- Warning (fields should be blank)')
-                    update_df(new_mod, 'WEST Fields (Imp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+7) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+8) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+9) + ', ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), imp_country[:2], 'WEST fields should be blank for this Import Country. If multiple import countries, please check if one of them pertains to this WEST field')
+                    update_df(new_mod, 'WEST Fields (Imp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', ', '.join(imp_west_fields_list), imp_country[:2], 'WEST fields should be blank for this Import Country. If multiple import countries, please check if one of them pertains to this WEST field')
 
     # Check Common Parts
     def ttc_parts_common_part(cell_row, cell_col, new_mod):
