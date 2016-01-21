@@ -348,7 +348,10 @@ def customer_contract_details(master_files, path):
 
     # Check if TTC P/N + Customer Code >= 2 Customer Contract, 2 Exp Countries, 2 Supplier Contracts
     def customer_contract_details_customer_contract_2(cell_row, cell_col, new_mod):
-        part_and_customer_no = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)) + str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1))
+        part_no = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+        customer_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)
+
+        part_and_customer_no = part_no + customer_code
 
         # Comparison List 1 = Customer Contract
         # Comparison List 2 = Export Countries
@@ -387,20 +390,19 @@ def customer_contract_details(master_files, path):
         else:
             part_customer_contract_discontinue = []
             for row in range(9, master_files['xl_sheet_main'].nrows):
-                part_customer_contract_discontinue.append((master_files['xl_sheet_main'].cell_value(row, 3), master_files['xl_sheet_main'].cell_value(row, 5), master_files['xl_sheet_main'].cell_value(row, 8)))
+                if master_files['xl_sheet_main'].cell_value(row, 0) == 'MOD' and master_files['xl_sheet_main'].cell_value(row, 3) == part_no and master_files['xl_sheet_main'].cell_value(row, 4) == customer_code and master_files['xl_sheet_main'].cell_value(row, 8) == 'Y':
+                    part_customer_contract_discontinue.append((
+                        str(master_files['xl_sheet_main'].cell_value(row, 3)),
+                        master_files['xl_sheet_main'].cell_value(row, 4),
+                        master_files['xl_sheet_main'].cell_value(row, 8)
+                    ))
 
-            matches_5 = 0
-            # if new part, check if previous customer contract is dicontinued
-            for element in part_customer_contract_discontinue:
-                if master_files['xl_sheet_main'].cell_value(cell_row, 0) == 'MOD' and part_customer_contract_discontinue[0] + part_customer_contract_discontinue[1] == master_files['xl_sheet_main'].cell_value(cell_row, cell_col) + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2) and part_customer_contract_discontinue[2] == 'Y':
-                    matches_5 += 1
-
-            if matches_5 == 1:
+            if len(part_customer_contract_discontinue) == 1:
                 print ('Customer Contract No. check 2 --- Pass (Discontinue MOD in submitted)')
                 update_df(new_mod, columns[cell_col+2], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_and_customer_no, comparison_list_1, 'For P/N + Customer Code, Customer Contract > 1, Discontinue MOD found in submitted Customer Contract Details')
             else:
                 print ('Customer Contract No. check 2 --- Fail (>1 Customer Contract)')
-                update_df(new_mod, columns[cell_col+2], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_and_customer_no, comparison_list_1, 'For P/N + Customer Code, Customer Contract > 1, Discontinue MOD not found in submitted Customer Contract Details')
+                update_df(new_mod, columns[cell_col+2], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no + customer_code, part_customer_contract_discontinue, 'For P/N + Customer Code, Customer Contract > 1, Discontinue MOD not found in submitted Customer Contract Details')
 
         if matches_2 == len(comparison_list_2):
             print ('Customer Contract No. check 3 --- Pass (Exp Country < 2)')
@@ -454,7 +456,7 @@ def customer_contract_details(master_files, path):
 
             except KeyError:
                 print('TTC Parts No. check 1 --- Fail (Part not found in system)')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), matches_2, 'Not registered in system and no submitted Module Group Master')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Not registered in system and no submitted Module Group Master')
 
         # If Customer Contract cross dock flag = Y, all parts in the module group must be from the same customer
         cross_dock = {}
