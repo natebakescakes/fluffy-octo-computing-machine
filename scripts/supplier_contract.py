@@ -5,6 +5,8 @@ import xlrd
 import pandas as pd
 
 from master_data import west_export
+from master_data import currency_master
+from master_data import payment_terms_master
 
 # Supplier Contract - Open required workbooks and check against
 def supplier_contract(master_files, path):
@@ -30,8 +32,6 @@ def supplier_contract(master_files, path):
     required = {
         0: "Customer Contract Details Master",
         6: "Supplier Contract Master",
-        12: "Currency Master",
-        13: "Payment Terms Master",
         15: "Supplier Master"
     }
 
@@ -275,11 +275,7 @@ def supplier_contract(master_files, path):
 
     # Currency must be found in Currency Master
     def supplier_contract_currency(cell_row, cell_col, new_mod):
-        currency_list_1 = []
-        for row in range(9, selected['backup_12'].sheet_by_index(0).nrows):
-            currency_list_1.append(selected['backup_12'].sheet_by_index(0).cell_value(row, 2))
-
-        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) in currency_list_1:
+        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) in currency_master:
             print ('Currency check 1 --- Pass')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Currency registered in Currency Master')
         else:
@@ -288,11 +284,7 @@ def supplier_contract(master_files, path):
 
     # Payment Terms must be found in Payment Terms Master
     def supplier_contract_payment_terms(cell_row, cell_col, new_mod):
-        payment_terms_list = []
-        for row in range(9, selected['backup_13'].sheet_by_index(0).nrows):
-            payment_terms_list.append(selected['backup_13'].sheet_by_index(0).cell_value(row, 2))
-
-        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) in payment_terms_list:
+        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) in payment_terms_master:
             print ('Payment Terms check 1 --- Pass')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Payment Terms registered in Payment Terms Master')
         else:
@@ -531,12 +523,6 @@ def supplier_contract(master_files, path):
                     print ('Retrieved file: %s' % file)
                 if file.find('MRS_SupplierContract') != -1:
                     selected['backup_6'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
-                    print ('Retrieved file: %s' % file)
-                if file.find('IMS_Currency') != -1:
-                    selected['backup_12'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
-                    print ('Retrieved file: %s' % file)
-                if file.find('IMS_PaymentTerms') != -1:
-                    selected['backup_13'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
                     print ('Retrieved file: %s' % file)
                 if file.find('MRS_Supplier') != -1 and file.find('MRS_SupplierContract') == -1 and file.find('MRS_SupplierPartsMaster') == -1:
                     selected['backup_15'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
