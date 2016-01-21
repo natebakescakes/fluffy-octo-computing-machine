@@ -38,7 +38,7 @@ def results_filename():
     case_no = os.path.basename(path)[:12] # Get case_no
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S") # time serial
 
-    return 'mctresults_%s_%s.xlsx' % (case_no, timestamp)
+    return 'mctresults_%s-%s.xlsx' % (case_no, timestamp)
 
 def results_format(writer):
     # FAIL - Light red fill with dark red text
