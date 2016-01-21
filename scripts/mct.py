@@ -121,7 +121,6 @@ if __name__ == "__main__":
         master_files['xl_workbook'] = xlrd.open_workbook(os.path.join(path, '1) Submit', os.listdir(os.path.join(path, '1) Submit'))[int(index)]), formatting_info=True)
 
         if options.check_all:
-
             # Check whether valid sheet name input
             for sheet_name in master_files['xl_workbook'].sheet_names():
                 if sheet_name in SHEET_NAMES:
@@ -135,9 +134,15 @@ if __name__ == "__main__":
 
             for i, sheet in enumerate(master_files['xl_workbook'].sheets()):
                 master_files['xl_sheet_main'] = master_files['xl_workbook'].sheet_by_index(i)
-                master_type = master_files['xl_sheet_main'].cell_value(rowx=2, colx=0)
-                if master_type == '':
-                    master_type = master_files['xl_sheet_main'].cell_value(rowx=1, colx=0)
+
+                if master_files['xl_sheet_main'].cell_value(2, 0) != '':
+                    master_type = master_files['xl_sheet_main'].cell_value(2, 0)
+                elif master_files['xl_sheet_main'].cell_value(1, 0) != '':
+                    master_type = master_files['xl_sheet_main'].cell_value(1, 0)
+                else:
+                    print ('MRS Header is blank, please check MRS')
+                    os.system('pause')
+                    sys.exit()
 
                 print ('Checking %s' % master_type)
 
