@@ -503,10 +503,12 @@ def build_out(master_files, path):
                                 update_df('MOD', columns[col+2], row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(row, col+2), 'NA', 'Cannot be modded')
                             # Mod: Build-out Indicator, return indicator
                             if col+2 == 6:
-                                indicator = build_out_indicator(row, 6, 'MOD')
+                                build_out_indicator(row, 6, 'MOD')
 
                             # If build-out indicator N, no need to check the following fields.
                             # build_out_indicator already checks for blanks
+                            indicator = master_files['xl_sheet_main'].cell_value(row, 6)
+
                             if indicator == 'N':
                                 pass
                             elif indicator == 'Y':
