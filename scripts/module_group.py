@@ -472,6 +472,12 @@ def module_group(master_files, path):
                             print ('MOD Reference Check --- Fail (%s BLACK but MOD)' % columns[col])
                             update_df('MOD', columns[col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, col), backup_row_contents[col], 'Field is indicated as \'UNCHANGED (BLACK)\' but different from system')
 
+        if validate_count == len(range(2, 13)): # Hard Code MAX COLUMN
+            print ('MOD Reference check --- Pass')
+            update_df('MOD', 'ALL', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', str(submitted_contents), str(backup_row_contents), 'Fields are correctly coloured to indicate \'TO CHANGE\'')
+
+        return True
+
     # Print required masters for checking
     check_dict = {
         'NEW/MOD': [],
