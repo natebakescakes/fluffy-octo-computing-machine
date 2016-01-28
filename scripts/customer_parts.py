@@ -339,8 +339,8 @@ def customer_parts(master_files, path):
         if master_files['xl_sheet_main'].cell_value(cell_row, 0) == 'MOD' and master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == '':
             return
 
-        spq = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
-        orderlot = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)
+        spq = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+        orderlot = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1))
 
         customer_parts_customer_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-9) + master_files['xl_sheet_main'].cell_value(cell_row, cell_col-8)
 
@@ -380,7 +380,7 @@ def customer_parts(master_files, path):
             supplier_parts_type = '2'
 
         try:
-            srbq = supplier_parts[customer_contract_details[customer_parts_customer_code]]
+            srbq = int(supplier_parts[customer_contract_details[customer_parts_customer_code]])
 
             if srbq % spq == 0 or spq % srbq == 0:
                 if orderlot % srbq == 0:
@@ -437,9 +437,9 @@ def customer_parts(master_files, path):
 
     # IP Specs cannot be zero, cannot be too large (>1)
     def customer_parts_ip_specs(cell_row, cell_col, new_mod):
-        box_length = round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 3)
-        box_width = round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), 3)
-        box_height = round(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), 3)
+        box_length = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)), 3)
+        box_width = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)), 3)
+        box_height = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)), 3)
 
         if box_length == 0 or box_width == 0 or box_height == 0:
             print ('IP Specs check --- Fail (LWH cannot be 0)')
@@ -454,11 +454,11 @@ def customer_parts(master_files, path):
 
     # IP Gross Weight / SPQ must be more than or equal to Parts Net Weight
     def customer_parts_gross_weight(cell_row, cell_col, new_mod):
-        ip_gross_weight = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+        ip_gross_weight = float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6) != '':
-            spq = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)
+            spq = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6))
         else:
-            spq = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-7)
+            spq = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-7))
 
         part_no_net_weight = {}
 
@@ -472,7 +472,7 @@ def customer_parts(master_files, path):
             pass
 
         try:
-            net_weight = part_no_net_weight[master_files['xl_sheet_main'].cell_value(cell_row, cell_col-15)]
+            net_weight = float(part_no_net_weight[master_files['xl_sheet_main'].cell_value(cell_row, cell_col-15)])
         except KeyError:
             print ('Gross Weight check --- Fail (Cannot find P/N)')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', 'GW: ' + str(ip_gross_weight) + ', SPQ: ' + str(spq), 'NA', 'Cannot find P/N in Part Master (Submitted/System)')

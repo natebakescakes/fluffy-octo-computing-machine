@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Cleanup TTC Parts: WEST Field check
 - **BUGFIX #5** - Fixed false positive in Customer Contract Details: Customer Contract check
 - Fixed error in Build-out master that caused program to crash
+- Minor typecasting fixes in Supplier Parts & Customer Parts
 
 ## [1.0.3b] - 2016-01-19
 ### Added

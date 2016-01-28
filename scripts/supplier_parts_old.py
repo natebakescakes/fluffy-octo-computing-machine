@@ -287,7 +287,7 @@ def supplier_parts(master_files, path):
                 print ('SRBQ check 1 --- Fail')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)) + ', ' + str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)), 'NA', 'For NEW Parts, current SRBQ must be blank, next SRBQ must be filled')
 
-        srbq = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+        srbq = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
 
         part_no_supplier_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-7) + master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)
 
@@ -360,14 +360,14 @@ def supplier_parts(master_files, path):
         ol_list = list(set(ol_list))
 
         if len(spq_list) == 1:
-            spq = spq_list[0]
+            spq = int(spq_list[0])
         else:
             print ('SRBQ check 2 --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', srbq, str(spq_list), 'Multiple SPQ values found, inform user that SPQ of corresponding customer parts do not match other SPQs that are registered in system')
             return
 
         if len(ol_list) == 1:
-            orderlot = ol_list[0]
+            orderlot = int(ol_list[0])
         else:
             print ('SRBQ check 2 --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', srbq, str(ol_list), 'Multiple OL values found, inform user that OL of corresponding customer parts do not match other OL that are registered in system')
