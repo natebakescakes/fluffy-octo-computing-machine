@@ -99,6 +99,7 @@ payment_terms_master = [
     'ZD03',
     'ZD04',
     'ZD05',
+    'ZD06', # Feb '16 Submission - NEW EG Payment Term
     'ZL00',
     'ZL01',
     'ZL02',
