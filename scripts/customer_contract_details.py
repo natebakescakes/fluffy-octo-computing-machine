@@ -648,7 +648,7 @@ def customer_contract_details(master_files, path):
 
         customer_contract_details = []
         for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-            if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code:
+            if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code and selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
                 customer_contract_details.append((selected['backup_0'].sheet_by_index(0).cell_value(row, 3), selected['backup_0'].sheet_by_index(0).cell_value(row, 5), selected['backup_0'].sheet_by_index(0).cell_value(row, 9)))
 
         try:
@@ -662,6 +662,8 @@ def customer_contract_details(master_files, path):
                     customer_contract_details.append((additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)))
         except KeyError:
             pass
+
+
 
         ttc_contract_list = []
         for entry in customer_contract_details:

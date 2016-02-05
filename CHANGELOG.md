@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.0.3c] - TBA
+### Added
+- New payment terms registered (SC2016010161)
+
 ### Changed
 - Restructured all Master Data into its own master_data package
 - Removed requirement to have IMS_Currency and IMS_Payment_Terms in Backup
@@ -14,6 +17,8 @@ All notable changes to this project will be documented in this file.
 - **BUGFIX #5** - Fixed false positive in Customer Contract Details: Customer Contract check
 - Fixed error in Build-out master that caused program to crash
 - Minor typecasting fixes in Supplier Parts & Customer Parts
+- Fixed dependencies on Supplier Parts Master
+- Module Group Code should have 1 TTC Contract check now only considers discontinued parts
 
 ## [1.0.3b] - 2016-01-19
 ### Added
