@@ -359,7 +359,8 @@ def module_group(master_files, path):
     def module_group_module_type(cell_row, cell_col, new_mod):
         module_type_list = []
         for row in range(9, selected['backup_16'].sheet_by_index(0).nrows):
-            module_type_list.append(selected['backup_16'].sheet_by_index(0).cell_value(row, 3))
+            if selected['backup_16'].sheet_by_index(0).cell_value(row, 17) == 'N':
+                module_type_list.append(selected['backup_16'].sheet_by_index(0).cell_value(row, 3))
 
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) in module_type_list:
             print ('Module Type check --- Pass')
