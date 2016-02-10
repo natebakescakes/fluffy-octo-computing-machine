@@ -1010,26 +1010,34 @@ def customer_contract_details(master_files, path):
 
             submitted_part_customer_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-5) + master_files['xl_sheet_main'].cell_value(cell_row, cell_col-4)
 
-            customer_contract = []
-            for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-                customer_contract.append((selected['backup_0'].sheet_by_index(0).cell_value(row, 3) + selected['backup_0'].sheet_by_index(0).cell_value(row, 4), selected['backup_0'].sheet_by_index(0).cell_value(row, 5), selected['backup_0'].sheet_by_index(0).cell_value(row, 8)))
-
+            # Append all contracts with same P/N + Customer code and not discontinued
             customer_contract_common = []
-            for contract_no in customer_contract:
-                if submitted_part_customer_code == contract_no[0] and contract_no[2] == 'N':
-                    customer_contract_common.append(contract_no[1])
 
-            matches_1 = 0
-            for contract_no in customer_contract_common:
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3) == contract_no:
-                    matches_1 += 1
+            for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
+                if submitted_part_customer_code == str(selected['backup_0'].sheet_by_index(0).cell_value(row, 3)) + str(selected['backup_0'].sheet_by_index(0).cell_value(row, 4)) and selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
+                    customer_contract_common.append((
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 3),
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 8)
+                    ))
 
-            if matches_1 == len(customer_contract_common):
+            if len(customer_contract_common) == 0: # No other non-discontinued contract present
                 print('Revive check (Multiple Customer Contract) --- Pass')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_common, 'Revive: Only 1 Customer Contract No.')
             else:
-                print('Revive check (Multiple Customer Contract) --- Fail (Check if other customer contracts have been discontinued)')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_common, 'Revive: Multiple Customer Contract that are not discontinued')
+                # Check if submitted master discontinues those in customer_contract_common
+                discontinue_count = 0
+                for tuple in customer_contract_common:
+                    for row in range(9, master_files['xl_sheet_main'].nrows):
+                        if master_files['xl_sheet_main'].cell_value(row, 0) == 'MOD' and master_files['xl_sheet_main'].cell_value(row, 3) == tuple[0] and master_files['xl_sheet_main'].cell_value(row, 5) == tuple[1] and master_files['xl_sheet_main'].cell_value(row, 8) == 'Y':
+                            discontinue_count += 1
+
+                if discontinue_count == len(customer_contract_common):
+                    print('Revive check (Multiple Customer Contract) --- Pass')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_common, 'Revive: Only 1 Customer Contract No., outstanding parts discontined in submitted master')
+                else:
+                    print('Revive check (Multiple Customer Contract) --- Fail (Check if other customer contracts have been discontinued)')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_common, 'Revive: Multiple Customer Contract that are not discontinued, no MOD request to discontinue parts')
 
         # Wrong input
         else:

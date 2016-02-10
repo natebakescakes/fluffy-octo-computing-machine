@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Minor typecasting fixes in Supplier Parts & Customer Parts
 - Fixed dependencies on Supplier Parts Master
 - Module Group Code should have 1 TTC Contract check now only considers discontinued parts
+- Customer Contract Details: Revive check now considers discontinuing parts in same submitted master
 
 ## [1.0.3b] - 2016-01-19
 ### Added
