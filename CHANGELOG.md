@@ -21,6 +21,8 @@ All notable changes to this project will be documented in this file.
 - Module Group Code should have 1 TTC Contract check now only considers discontinued parts
 - Customer Contract Details: Revive check now considers discontinuing parts in same submitted master
 - Module Group Master: Module Type check now only considers non-discontinued entries
+- Fixed error in Customer Parts Master: Inner Packing Time check that caused program to crash
+- Customer/Supplier Parts: Discontinued check now considers multiple contracts
 
 ## [1.0.3b] - 2016-01-19
 ### Added

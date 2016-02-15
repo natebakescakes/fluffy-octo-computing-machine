@@ -611,12 +611,22 @@ def customer_parts(master_files, path):
 
     # IPT cannot be less than 1
     def customer_parts_inner_packing_time(cell_row, cell_col, new_mod):
-        if int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)) < 1:
-            print ('Inner Packing Time check --- Fail (IPT is too short)')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Inner Packing Time cannot be <1')
-        else:
-            print ('Inner Packing Time check --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Inner Packing Time not <1')
+        inner_packing_time = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+
+        try:
+            if int(inner_packing_time) < 1:
+                print ('Inner Packing Time check --- Fail (IPT is too short)')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', inner_packing_time, 'NA', 'Inner Packing Time cannot be <1')
+            else:
+                print ('Inner Packing Time check --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', inner_packing_time, 'NA', 'Inner Packing Time not <1')
+        except ValueError:
+            if inner_packing_time == '':
+                print ('Inner Packing Time check --- Fail')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', inner_packing_time, 'NA', 'Inner Packing Time not filled')
+            else:
+                print ('Inner Packing Time check --- Fail')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', inner_packing_time, 'NA', 'Inner Packing Time not a number')
 
     # Use colour to test columns to be MOD
     def get_mod_columns(cell_row):
@@ -906,15 +916,21 @@ def customer_parts(master_files, path):
 
     def customer_parts_discontinued(cell_row, cell_col):
         part_no_customer_code = PRIMARY_KEY_1 + PRIMARY_KEY_2
+        discontinue_list = []
 
         for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
             if part_no_customer_code == str(selected['backup_0'].sheet_by_index(0).cell_value(row, 3)) + selected['backup_0'].sheet_by_index(0).cell_value(row, 4):
-                if selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
-                    print ('Discontinued check --- Pass')
-                    update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no_customer_code, selected['backup_0'].sheet_by_index(0).cell_value(row, 8), 'Part has not been discontinued')
-                else:
-                    print ('Discontinued check --- Fail')
-                    update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no_customer_code, selected['backup_0'].sheet_by_index(0).cell_value(row, 8), 'Part has already been discontinued')
+                discontinue_list.append((
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 8)
+                ))
+
+        if 'N' in [tuple[1] for tuple in discontinue_list]:
+            print ('Discontinued check --- Pass')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no_customer_code, ', '.join(discontinue_list), 'Part has contract that has not been discontinued')
+        else:
+            print ('Discontinued check --- Fail')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no_customer_code, ', '.join(discontinue_list), 'Part does not have contract that has not been discontinued')
 
 
     # Print required masters for checking
