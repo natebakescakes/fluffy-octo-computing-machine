@@ -927,10 +927,10 @@ def customer_parts(master_files, path):
 
         if 'N' in [tuple[1] for tuple in discontinue_list]:
             print ('Discontinued check --- Pass')
-            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no_customer_code, ', '.join(discontinue_list), 'Part has contract that has not been discontinued')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no_customer_code, discontinue_list, 'Part has contract that has not been discontinued')
         else:
             print ('Discontinued check --- Fail')
-            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no_customer_code, ', '.join(discontinue_list), 'Part does not have contract that has not been discontinued')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no_customer_code, discontinue_list, 'Part does not have contract that has not been discontinued')
 
 
     # Print required masters for checking
