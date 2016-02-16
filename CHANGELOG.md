@@ -23,6 +23,8 @@ All notable changes to this project will be documented in this file.
 - Module Group Master: Module Type check now only considers non-discontinued entries
 - Fixed error in Customer Parts Master: Inner Packing Time check that caused program to crash
 - Customer/Supplier Parts: Discontinued check now considers multiple contracts
+- Fixed Inner Packing BOM: MOD check that caused program to check
+- Cleaned up Customer Contract Details: Module Group check 3 to use correct algorithm
 
 ## [1.0.3b] - 2016-01-19
 ### Added

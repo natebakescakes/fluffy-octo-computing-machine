@@ -495,31 +495,42 @@ def customer_contract_details(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Customer Contract not found in Customer Contract Master or system')
 
         # If Module Group is single, Module Group Code customer must match with Customer Code
-        ms_flag = {}
-        try:
-            for row in range(10, additional['TNM_MODULE_GROUP'].nrows):
-                ms_flag[additional['TNM_MODULE_GROUP'].cell_value(row, 2)] = (additional['TNM_MODULE_GROUP'].cell_value(row, 5), additional['TNM_MODULE_GROUP'].cell_value(row, 6))
-        except KeyError:
-            pass
-        finally:
-            for row in range(10, selected['backup_5'].sheet_by_index(0).nrows):
-                # dictionary = (customer condition, customer code)
-                ms_flag[selected['backup_5'].sheet_by_index(0).cell_value(row, 2)] = (selected['backup_5'].sheet_by_index(0).cell_value(row, 5), selected['backup_5'].sheet_by_index(0).cell_value(row, 6))
+        module_group_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+        customer_code_submitted = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3)
+
+        ms_flag = ()
+        for row in range(10, selected['backup_5'].sheet_by_index(0).nrows):
+            if selected['backup_5'].sheet_by_index(0).cell_value(row, 2) == module_group_code:
+                ms_flag = (
+                    selected['backup_5'].sheet_by_index(0).cell_value(row, 5),
+                    selected['backup_5'].sheet_by_index(0).cell_value(row, 6)
+                )
 
         try:
-            if ms_flag[master_files['xl_sheet_main'].cell_value(cell_row, cell_col)][0] == 'S':
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3) == ms_flag[master_files['xl_sheet_main'].cell_value(cell_row, cell_col)][1]:
-                    print ('Module Group Code check 3 --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3), 'MS Flag = S, Module Group Code customer match with Customer Code')
-                else:
-                    print ('Module Group Code check 3 --- Fail (Module Group Code customer must match with customer code)')
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3), 'MS Flag = S, Module Group Code customer discrepancy')
-            else:
-                print ('Module Group Code check 3 --- Pass (%s is Mixed)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'MS Flag = M, no check required')
+            for row in range(10, additional['TNM_MODULE_GROUP'].nrows):
+                if additional['TNM_MODULE_GROUP'].cell_value(row, 2) == module_group_code:
+                    ms_flag = (
+                        additional['TNM_MODULE_GROUP'].cell_value(row, 5),
+                        additional['TNM_MODULE_GROUP'].cell_value(row, 6)
+                    )
         except KeyError:
+            pass
+
+        if ms_flag == ():
             print ('Module Group Code check 3 --- Fail (Module Group Code not found)')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Module Group Code not found in Module Group Master or system')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_group_code, 'NA', 'Module Group Code not found in system or submitted')
+            return
+
+        if ms_flag[0] == 'S':
+            if customer_code_submitted == ms_flag[1]:
+                print ('Module Group Code check 3 --- Pass')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_group_code, ms_flag, 'MS Flag = S, Module Group Code customer match with Customer Code')
+            else:
+                print ('Module Group Code check 3 --- Fail')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_group_code, ms_flag, 'MS Flag = S, Module Group Code customer discrepancy')
+        else:
+            print ('Module Group Code check 3 --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_group_code, ms_flag, 'MS Flag = M, no check required')
 
     def customer_contract_details_discontinue_new(cell_row, cell_col, new_mod):
         # Check if discontinue indicator is 'N'
