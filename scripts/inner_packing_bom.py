@@ -434,7 +434,7 @@ def inner_packing_bom(master_files, path):
             # Conditional for MOD parts
             else:
                 print ('Inner Packing BOM cannot be modded!')
-                update_df(master_files['xl_sheet_main'].cell_value(row, 0), columns[2], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(row, 0), 'NA', 'Inner Packing BOM cannot be modded')
+                update_df(master_files['xl_sheet_main'].cell_value(row, 0), columns[2], row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(row, 0), 'NA', 'Inner Packing BOM cannot be modded')
 
             print ('-' * 10)
 
