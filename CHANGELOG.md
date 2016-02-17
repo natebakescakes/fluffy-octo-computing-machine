@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [1.0.3c] - TBA
 ### Added
 - New payment terms registered (SC2016010161)
+- Added check in revive parts to check whether Customer Contract No. has been discontinued
 
 ### Changed
 - Restructured all Master Data into its own master_data package
