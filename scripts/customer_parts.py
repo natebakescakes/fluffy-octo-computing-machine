@@ -235,7 +235,7 @@ def customer_parts(master_files, path):
         else:
             backup_row_contents = []
             for row in range(9, selected['backup_2'].sheet_by_index(0).nrows):
-                if part_and_customer_no == str(selected['backup_2'].sheet_by_index(0).cell_value(row, 2)) + selected['backup_2'].sheet_by_index(0).cell_value(row, 3):
+                if part_and_customer_code == str(selected['backup_2'].sheet_by_index(0).cell_value(row, 2)) + selected['backup_2'].sheet_by_index(0).cell_value(row, 3):
                     for col in range(0, 27): # Hard Code column range
                         backup_row_contents.append(selected['backup_2'].sheet_by_index(0).cell_value(row, col))
 
