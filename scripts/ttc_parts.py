@@ -438,7 +438,7 @@ def ttc_parts(master_files, path):
                 gross_weight = list(set(gross_weight_list))[0]
             else:
                 for spq, gross_weight in all_spq_gross_weight:
-                    if int(gross_weight) / int(spq) >= int(net_weight):
+                    if float(gross_weight) / int(spq) >= float(net_weight):
                         validate_count += 1
 
                 if validate_count == len(all_spq_gross_weight):

@@ -26,6 +26,8 @@ All notable changes to this project will be documented in this file.
 - Customer/Supplier Parts: Discontinued check now considers multiple contracts
 - Fixed Inner Packing BOM: MOD check that caused program to check
 - Cleaned up Customer Contract Details: Module Group check 3 to use correct algorithm
+- Fixed wrong variable in Customer Parts: MOD check
+- Fixed casting issue in Parts Master: Net Weight check
 
 ## [1.0.3b] - 2016-01-19
 ### Added
