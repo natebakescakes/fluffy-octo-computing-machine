@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Removed requirement to have IMS_Currency and IMS_Payment_Terms in Backup
     - Now function as static assets in master_data
 - Changed output filename to "mctresults_[case_no]-[timestamp].xlsx"
+- Updated TTC Contract: Customer Inventory Flag check with ARS B-0086 change
 
 ### Fixed
 - Fixed Supplier Parts Master: Box Specs/M3 typecast error

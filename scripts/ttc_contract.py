@@ -60,6 +60,7 @@ def ttc_contract(master_files, path):
         0: "Customer Contract Details Master",
         4: "TTC Contract Master",
         5: "Module Group Master",
+        7: "Customer Contract Master",
         8: "Shipping Calendar Master",
         14: "Customer Master",
         15: "Supplier Master"
@@ -510,40 +511,59 @@ def ttc_contract(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Payment Terms cannot be found in Payment Terms Master')
 
     # If Customer Inventory Flag = Y, customer contract cross-dock must be 'N' and Imp WH Flag must be 'Y'
+    # Change from ARS B-0086, only Imp WH Flag must be 'Y'
     def ttc_contract_customer_inventory(cell_row, cell_col, new_mod):
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == 'Y':
             customer_contract_details_list = []
             for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
                 if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-22) == selected['backup_0'].sheet_by_index(0).cell_value(row, 9):
-                    customer_contract_list.append(selected['backup_0'].sheet_by_index(0).cell_value(row, 5))
+                    customer_contract_details_list.append(selected['backup_0'].sheet_by_index(0).cell_value(row, 5))
 
             try:
                 for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
                     if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-22) == additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9):
-                        customer_contract_list.append(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5))
+                        customer_contract_details_list.append(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5))
             except KeyError:
                 pass
 
             customer_contract_list = {}
-            for row in range(10, selected['backup_0'].sheet_by_index(0).nrows):
-                customer_contract_list[selected['backup_0'].sheet_by_index(0).cell_value(row, 2)] = (selected['backup_0'].sheet_by_index(0).cell_value(row, 7), selected['backup_0'].sheet_by_index(0).cell_value(row, 13))
+            # for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):
+            #     customer_contract_list[selected['backup_7'].sheet_by_index(0).cell_value(row, 2)] = (selected['backup_7'].sheet_by_index(0).cell_value(row, 7), selected['backup_7'].sheet_by_index(0).cell_value(row, 13))
 
-            cross_dock_list = []
+            for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):
+                customer_contract_list[selected['backup_7'].sheet_by_index(0).cell_value(row, 2)] = selected['backup_7'].sheet_by_index(0).cell_value(row, 13)
+
+            # cross_dock_list = []
             imp_warehouse_flag = []
             for contract_no in list(set(customer_contract_details_list)):
-                cross_dock_list.append(customer_contract_list[contract_list][0])
-                imp_warehouse_flag.append(customer_contract_list[1])
+                # cross_dock_list.append(customer_contract_list[contract_no][0])
+                # imp_warehouse_flag.append(customer_contract_list[contract_no][1])
+                imp_warehouse_flag.append(customer_contract_list[contract_no])
 
-            if all(x == 'N' for x in cross_dock_list):
-                if all(x == 'Y' for x in imp_warehouse_flag):
-                    print ('Customer Inventory Flag check --- Pass')
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(cross_dock_list) + ' ' + str(imp_warehouse_flag), 'All Imp Warehouse Flag = Y, all Cross Dock Flag = N')
-                else:
-                    print ('Customer Inventory Flag check --- Fail')
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(imp_warehouse_flag), 'Not all Imp Warehouse Flag = Y')
+            # ------------- Changed with ARS B-0086 ------------- #
+
+            # if all(x == 'N' for x in cross_dock_list):
+            #     if all(x == 'Y' for x in imp_warehouse_flag):
+            #         print ('Customer Inventory Flag check --- Pass')
+            #         update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(cross_dock_list) + ' ' + str(imp_warehouse_flag), 'All Imp Warehouse Flag = Y, all Cross Dock Flag = N')
+            #     else:
+            #         print ('Customer Inventory Flag check --- Fail')
+            #         update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(imp_warehouse_flag), 'Not all Imp Warehouse Flag = Y')
+            # else:
+            #     print ('Customer Inventory Flag check --- Fail')
+            #     update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(cross_dock_list), 'Not all Cross Dock Flag = N')
+
+            # ------------- Changed with ARS B-0086 ------------- #
+
+            if all(x == 'Y' for x in imp_warehouse_flag):
+                # print ('Customer Inventory Flag check --- Pass')
+                # update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(cross_dock_list) + ' ' + str(imp_warehouse_flag), 'All Imp Warehouse Flag = Y, all Cross Dock Flag = N')
+
+                print ('Customer Inventory Flag check --- Pass')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(imp_warehouse_flag), 'All Imp Warehouse Flag = Y')
             else:
                 print ('Customer Inventory Flag check --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(cross_dock_list), 'Not all Cross Dock Flag = N')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(imp_warehouse_flag), 'Not all Imp Warehouse Flag = Y')
 
         elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == 'N':
             print ('Customer Inventory Flag check --- Pass')
@@ -878,6 +898,9 @@ def ttc_contract(master_files, path):
                     print ('Retrieved file: %s' % file)
                 if file.find('MRS_ModuleGroup') != -1:
                     selected['backup_5'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
+                    print ('Retrieved file: %s' % file)
+                if file.find('MRS_CustomerContract') != -1 and file.find('MRS_CustomerContractDetail') == -1:
+                    selected['backup_7'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
                     print ('Retrieved file: %s' % file)
                 if file.find('MRS_ShippingCalendar') != -1:
                     selected['backup_8'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
