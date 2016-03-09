@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 - Fixed wrong variable in Customer Parts: MOD check
 - Fixed casting issue in Parts Master: Net Weight check
 - Fixed variable typo in Parts Master: WEST fields check that caused program to crash
+- Proper error handling for Build-Out Master: Date check
 
 ## [1.0.3b] - 2016-01-19
 ### Added

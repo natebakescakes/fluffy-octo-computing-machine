@@ -282,22 +282,32 @@ def build_out(master_files, path):
 
     def build_out_date(cell_row, cell_col, new_mod):
         # Convert strings into date format
-        date_1 = time.strptime(str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)),"%d %b %Y")
-        date_2 = time.strptime(str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col + 1)), "%b %Y")
-        date_3 = time.strptime(str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col + 5)), "%d %b %Y")
+        build_out_date = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+        last_customer_order_month = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)
+        last_supplier_delivery_date = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+5)
 
-        reference_display = 'Last Customer Order Month: ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) + ' Last Supplier Delivery Date: ' + master_files['xl_sheet_main'].cell_value(cell_row, cell_col+5)
+        reference_display = 'Last Customer Order Month: {}, Last Supplier Delivery Date: {}'.format(last_customer_order_month, last_supplier_delivery_date)
+
+        try:
+            date_1 = time.strptime(str(build_out_date),"%d %b %Y")
+            date_2 = time.strptime(str(last_customer_order_month), "%b %Y")
+            date_3 = time.strptime(str(last_supplier_delivery_date), "%d %b %Y")
+        except ValueError: # Date doesn't make sense (e.g. 31 Jun 2016)
+            print ('Build-out Date check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', build_out_date, reference_display, 'Dates Invalid')
+            return
+
         # Last Customer Order Month should be before Last supplier Delivery Date which should be before Build-out Date
         if date_2 < date_3:
             if date_3 < date_1:
                 print('Build-out Date check --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), reference_display, 'Dates Validated')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', build_out_date, reference_display, 'Dates Validated')
             else:
                 print('Build-out Date check --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), reference_display, 'Last Supplier Delivery Date must be before Build-out Date')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', build_out_date, reference_display, 'Last Supplier Delivery Date must be before Build-out Date')
         else:
             print('Build-out Date check --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), reference_display, 'Last Customer Order Month must be before Last Supplier Delivery Date')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', build_out_date, reference_display, 'Last Customer Order Month must be before Last Supplier Delivery Date')
 
     # Use colour to test columns to be MOD
     def get_mod_columns(cell_row):
