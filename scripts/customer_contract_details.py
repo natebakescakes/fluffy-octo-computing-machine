@@ -166,21 +166,15 @@ def customer_contract_details(master_files, path):
     def customer_contract_details_duplicate_key(cell_row, cell_col, new_mod):
         concat_list = []
         for row in range(9, master_files['xl_sheet_main'].nrows):
-            concat_list.append((master_files['xl_sheet_main'].cell_value(row, 0), str(master_files['xl_sheet_main'].cell_value(row, 3)) + master_files['xl_sheet_main'].cell_value(row, 5)))
+            if master_files['xl_sheet_main'].cell_value(row, 0) != '':
+                concat_list.append((master_files['xl_sheet_main'].cell_value(row, 0), str(master_files['xl_sheet_main'].cell_value(row, 3)) + master_files['xl_sheet_main'].cell_value(row, 5)))
 
-        matches = 0
-        for concat_str in concat_list:
-            # Check if part no same modifier
-            if master_files['xl_sheet_main'].cell_value(cell_row, 0) == concat_str[0]:
-                if PRIMARY_KEY_1 + PRIMARY_KEY_2 == concat_str[1]:
-                    matches += 1
-
-        if matches == 1:
+        if len(set(concat_list)) == len(concat_list):
             print ('Duplicate Key check --- Pass (Primary key is unique in submitted master)')
-            update_df(new_mod, 'Primary Key(s)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', PRIMARY_KEY_1 + PRIMARY_KEY_2, matches, 'Primary key is unique in submitted master')
-        elif matches >1:
+            update_df(new_mod, 'Primary Key(s)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', PRIMARY_KEY_1 + PRIMARY_KEY_2, 'NA', 'Primary key is unique in submitted master')
+        else:
             print ('Duplicate Key check --- Fail (Primary key is not unique in submitted master)')
-            update_df(new_mod, 'Primary Key(s)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', PRIMARY_KEY_1 + PRIMARY_KEY_2, matches, 'Primary key is not unique in submitted master')
+            update_df(new_mod, 'Primary Key(s)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', PRIMARY_KEY_1 + PRIMARY_KEY_2, 'NA', 'Primary key is not unique in submitted master')
 
     # Check if TTC P/N registered in Parts Master
     def customer_contract_details_part_no_1(cell_row, cell_col, new_mod):
