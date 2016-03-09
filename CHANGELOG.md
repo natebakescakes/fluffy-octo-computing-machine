@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
     - Now function as static assets in master_data
 - Changed output filename to "mctresults_[case_no]-[timestamp].xlsx"
 - Updated TTC Contract: Customer Inventory Flag check with ARS B-0086 change
+- Changed algorithm for Customer Contract Details duplicate check
 
 ### Fixed
 - Fixed Supplier Parts Master: Box Specs/M3 typecast error
@@ -29,6 +30,7 @@ All notable changes to this project will be documented in this file.
 - Cleaned up Customer Contract Details: Module Group check 3 to use correct algorithm
 - Fixed wrong variable in Customer Parts: MOD check
 - Fixed casting issue in Parts Master: Net Weight check
+- Fixed variable typo in Parts Master: WEST fields check that caused program to crash
 
 ## [1.0.3b] - 2016-01-19
 ### Added

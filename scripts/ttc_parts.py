@@ -568,7 +568,7 @@ def ttc_parts(master_files, path):
                     print ('WEST Import check --- Fail (incorrect Section)')
                     update_df(new_mod, columns[16], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', imp_west_section, west_import[imp_country[:2]]['Recommended Section'], 'Section discrepancy')
 
-                if str(imp_material_tax_class) == str(west_import[imp_country[:2]]['Material Tax Class']) or str(mimp_material_tax_class) == str(float(west_import[imp_country[:2]]['Material Tax Class'])):
+                if str(imp_material_tax_class) == str(west_import[imp_country[:2]]['Material Tax Class']) or str(imp_material_tax_class) == str(float(west_import[imp_country[:2]]['Material Tax Class'])):
                     print ('WEST Import check --- Pass (Material Tax Class match)')
                     update_df(new_mod, columns[17], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', imp_material_tax_class, west_import[imp_country[:2]]['Material Tax Class'], 'Material Tax Class match')
                 else:
