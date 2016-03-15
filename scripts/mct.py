@@ -111,7 +111,7 @@ if __name__ == "__main__":
         print ('The folder \'1) Submit\' is empty!')
     else:
         for i, filename in enumerate(os.listdir(os.path.join(path, '1) Submit'))):
-            if filename.endswith('.xls') or filename.endswith('.XLS'):
+            if (filename.lower().endswith('.xls'):
                 try:
                     print ('%d: %s' % (i, filename))
                 except UnicodeEncodeError:
