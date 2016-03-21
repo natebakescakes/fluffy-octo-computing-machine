@@ -30,7 +30,7 @@ def customer_contract_details(master_files, path):
         16: "Week Specify",
         17: "Month Specify",
         18: "Day Specify",
-        19: "Exp Remarks"
+        19: "Exp Remarks",
         20: "End User 1",
         21: "End User 2",
         22: "End User 3",
@@ -734,6 +734,25 @@ def customer_contract_details(master_files, path):
             print ('Exp Office check --- Fail (TTC-Exp not found in Office Master)')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'TTC-Exp not found in Office Master')
 
+    def customer_contract_details_supplier_code(cell_row, cell_col, new_mod):
+        part_no_supplier_code = str(master_files['xl_sheet_main'].cell_value(cell_row, 3)) + str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+
+        supplier_parts = [str(selected['backup_3'].sheet_by_index(0).cell_value(row, 2)) + str(selected['backup_3'].sheet_by_index(0).cell_value(row, 3)) for row in range(9, selected['backup_3'].sheet_by_index(0).cell_value(row, 3)) if str(selected['backup_3'].sheet_by_index(0).cell_value(row, 2)) + str(selected['backup_3'].sheet_by_index(0).cell_value(row, 3)) == parts_no_supplier_code]
+
+        try:
+            for row in range(9, additional['TNM_SUPPLIER_PARTS_MASTER'].nrows):
+                if str(additional['TNM_SUPPLIER_PARTS_MASTER'].cell_value(row, 2)) + additional['TNM_SUPPLIER_PARTS_MASTER'].cell_value(row, 3) == part_no_supplier_code and additional['TNM_SUPPLIER_PARTS_MASTER'].cell_value(row, 0) == 'NEW':
+                    supplier_parts.append(str(additional['TNM_SUPPLIER_PARTS_MASTER'].cell_value(row, 2)) + additional['TNM_SUPPLIER_PARTS_MASTER'].cell_value(row, 3))
+        except KeyError:
+            pass
+
+        if part_no_supplier_code in supplier_parts:
+            print ('Supplier Code check --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no_supplier_code, 'NA', 'Supplier Part not registered in Supplier Parts Master')
+        else:
+            print ('Supplier Code check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no_supplier_code, supplier_parts, 'Supplier Part not registered in Supplier Parts Master')
+
     # Check if Customer Code is registered in Supplier Contract Master, match with Supplier code
     def customer_contract_details_supplier_contract(cell_row, cell_col, new_mod):
         comparison_list = []
@@ -764,11 +783,6 @@ def customer_contract_details(master_files, path):
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1), 'Supplier Contract does not match with Supplier Code')
         else:
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Contract No. not found in Supplier Contract Master (Submitted/System)')
-
-    # def customer_contract_details_supplier_code(cell_row, cell_col, new_mod):
-    #     part_no_supplier_code = str(master_files['xl_sheet_main'].cell_value(cell_row, 3) + str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-    #
-    #
 
     # Match with input in Day Week Specify, Week Specify, Month Specify, Day Specify
     def customer_contract_details_supplier_delivery_pattern(cell_row, cell_col, new_mod):
@@ -1283,8 +1297,11 @@ def customer_contract_details(master_files, path):
                             # Mod: Exp Office
                             if col+2 == 10:
                                 customer_contract_details_exp(row, 10, 'MOD')
-                            # Mod: Supplier Code, Supplier Contract
-                            if col+2 == 11 or col+2 == 12:
+                            # Mod: Supplier Code
+                            if col+2 == 11:
+                                customer_contract_details_supplier_code(row, 11, 'MOD')
+                            # Mod: Supplier Contract
+                            if col+2 == 12:
                                 customer_contract_details_supplier_contract(row, 12, 'MOD')
                             # Mod: Supplier Delivery Pattern
                             if (any(col+2 == x for x in (14, 15, 16, 17, 18))):
