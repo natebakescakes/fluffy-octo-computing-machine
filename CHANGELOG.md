@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - New payment terms registered (SC2016010161)
 - Added check in revive parts to check whether Customer Contract No. has been discontinued
+- Added check in Customer Contract Details to check whether Supplier Parts have been registered
 
 ### Changed
 - Restructured all Master Data into its own master_data package
