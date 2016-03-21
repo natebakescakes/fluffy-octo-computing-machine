@@ -323,10 +323,10 @@ def ttc_parts(master_files, path):
                 update_df(new_mod, columns[4], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), gm_dict[ttc_part_no]['Display Part Number'], 'Display Part No. match')
             else:
                 if 'S500' in gm_dict[ttc_part_no]['Company']:
-                    print ('Global Master check 3 --- Fail\n(GM: %s Submitted %s)' % (gm_dict[ttc_part_no]['Display Part Number'], master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)))
+                    print ('Global Master check 3 --- Fail')
                     update_df(new_mod, columns[4], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), gm_dict[ttc_part_no]['Display Part Number'], 'Display Part No. discrepancy, JP-Sourcing Part')
                 else:
-                    print ('Global Master check 3 --- Fail\n(GM: %s Submitted %s)' % (gm_dict[ttc_part_no]['Display Part Number'], master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)))
+                    print ('Global Master check 3 --- Fail')
                     update_df(new_mod, columns[4], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), gm_dict[ttc_part_no]['Display Part Number'], 'Display Part No. discrepancy')
 
             # Check Parts Name

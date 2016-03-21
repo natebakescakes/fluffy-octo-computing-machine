@@ -367,7 +367,7 @@ def customer_contract(master_files, path):
             print ('Currency check 1 --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Currency cannot be found in Currency Master')
 
-        if any(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3)[:2] != x for x in ('ID', 'TW')):
+        if all(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3)[:2] != x for x in ('ID', 'TW')):
             # Assume Customer (Sold-to Party) is Customer Code
             customer_code_currency = []
             for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):

@@ -30,11 +30,12 @@ def customer_contract_details(master_files, path):
         16: "Week Specify",
         17: "Month Specify",
         18: "Day Specify",
-        19: "End User 1",
-        20: "End User 2",
-        21: "End User 3",
-        22: "End User 4",
-        23: "End User 5"
+        19: "Exp Remarks"
+        20: "End User 1",
+        21: "End User 2",
+        22: "End User 3",
+        23: "End User 4",
+        24: "End User 5"
     }
 
     # Dictionary of required masters for checking
@@ -764,6 +765,11 @@ def customer_contract_details(master_files, path):
         else:
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Contract No. not found in Supplier Contract Master (Submitted/System)')
 
+    # def customer_contract_details_supplier_code(cell_row, cell_col, new_mod):
+    #     part_no_supplier_code = str(master_files['xl_sheet_main'].cell_value(cell_row, 3) + str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+    #
+    #
+
     # Match with input in Day Week Specify, Week Specify, Month Specify, Day Specify
     def customer_contract_details_supplier_delivery_pattern(cell_row, cell_col, new_mod):
         input_to_check = str(int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)))
@@ -1286,7 +1292,7 @@ def customer_contract_details(master_files, path):
                                     customer_contract_details_supplier_delivery_pattern(row, 14, 'MOD')
                                     supplier_delivery_check_cycle += 1
                             # Mod: optional columns
-                            if (any(col+2 == x for x in (13, 19, 20, 21, 22, 23))):
+                            if (any(col+2 == x for x in (13, 19, 20, 21, 22, 23, 24))):
                                 print ('There is no programmed check for %s' % columns[col+2])
                                 update_df('MOD', columns[col+2], row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(row, col+2), 'NA', 'No programmed check')
 
