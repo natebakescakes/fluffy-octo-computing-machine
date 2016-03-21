@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Changed output filename to "mctresults_[case_no]-[timestamp].xlsx"
 - Updated TTC Contract: Customer Inventory Flag check with ARS B-0086 change
 - Changed algorithm for Customer Contract Details duplicate check
+- Updated Customer Contract Details to include S-0125 check
 
 ### Fixed
 - Fixed Supplier Parts Master: Box Specs/M3 typecast error
