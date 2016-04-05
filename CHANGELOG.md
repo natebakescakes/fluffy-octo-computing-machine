@@ -34,6 +34,7 @@ All notable changes to this project will be documented in this file.
 - Fixed casting issue in Parts Master: Net Weight check
 - Fixed variable typo in Parts Master: WEST fields check that caused program to crash
 - Proper error handling for Build-Out Master: Date check
+- Added warning for MOD reference check for blank cells but filled in system
 
 ## [1.0.3b] - 2016-01-19
 ### Added

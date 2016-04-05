@@ -779,7 +779,8 @@ def ttc_contract(master_files, path):
                     if master_files['xl_sheet_main'].cell_value(cell_row, col) == backup_row_contents[col]:
                         validate_count += 1
                     elif master_files['xl_sheet_main'].cell_value(cell_row, col) == '' and backup_row_contents[col] != '':
-                        validate_count += 1
+                        print ('MOD Reference Check --- WARNING (%s BLACK but MOD)' % columns[col])
+                        update_df('MOD', columns[col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, col), backup_row_contents[col], 'Field is indicated as \'BLANK\' but different from system')
                     else:
                         try:
                             if float(master_files['xl_sheet_main'].cell_value(cell_row, col)) == float(backup_row_contents[col]):

@@ -59,7 +59,7 @@ def customer_contract_details(master_files, path):
 
     def check_maximum_length(cell_row, new_mod):
         # Hard code range of columns to check
-        working_columns = list(range(2, 24))
+        working_columns = list(range(2, 25))
 
         validate_count = 0
         error_fields = []
@@ -232,11 +232,11 @@ def customer_contract_details(master_files, path):
             backup_row_contents = []
             for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
                 if part_and_customer_no == str(selected['backup_0'].sheet_by_index(0).cell_value(row, 3)) + selected['backup_0'].sheet_by_index(0).cell_value(row, 5):
-                    for col in range(0, 24): # Hard Code column range
+                    for col in range(0, 25): # Hard Code column range
                         backup_row_contents.append(selected['backup_0'].sheet_by_index(0).cell_value(row, col))
 
             submitted_row_contents = []
-            for col in range(0, 24): # Hard Code column range
+            for col in range(0, 25): # Hard Code column range
                 submitted_row_contents.append(master_files['xl_sheet_main'].cell_value(cell_row, col))
 
             discrepancy_reference = []
@@ -923,7 +923,7 @@ def customer_contract_details(master_files, path):
 
         submitted_contents = []
         validate_count = 0
-        for col in range(0, 24): # Hard Code MAX COLUMN
+        for col in range(0, 25): # Hard Code MAX COLUMN
 
             submitted_contents.append(master_files['xl_sheet_main'].cell_value(cell_row, col))
 
@@ -954,7 +954,8 @@ def customer_contract_details(master_files, path):
                     if master_files['xl_sheet_main'].cell_value(cell_row, col) == backup_row_contents[col]:
                         validate_count += 1
                     elif master_files['xl_sheet_main'].cell_value(cell_row, col) == '' and backup_row_contents[col] != '':
-                        validate_count += 1
+                        print ('MOD Reference Check --- WARNING (%s BLACK but MOD)' % columns[col])
+                        update_df('MOD', columns[col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, col), backup_row_contents[col], 'Field is indicated as \'BLANK\' but different from system')
                     else:
                         try:
                             if float(master_files['xl_sheet_main'].cell_value(cell_row, col)) == float(backup_row_contents[col]):
@@ -966,7 +967,7 @@ def customer_contract_details(master_files, path):
                             print ('MOD Reference Check --- Fail (%s BLACK but MOD)' % columns[col])
                             update_df('MOD', columns[col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, col), backup_row_contents[col], 'Field is indicated as \'UNCHANGED (BLACK)\' but different from system')
 
-        if validate_count == len(range(2, 24)): # Hard Code MAX COLUMN
+        if validate_count == len(range(2, 25)): # Hard Code MAX COLUMN
             print ('MOD Reference check --- Pass')
             update_df('MOD', 'ALL', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', str(submitted_contents), str(backup_row_contents), 'Fields are correctly coloured to indicate \'TO CHANGE\'')
 
@@ -1253,6 +1254,7 @@ def customer_contract_details(master_files, path):
                 customer_contract_details_ttc_contract_3(row, 9, 'NEW')
                 customer_contract_details_ttc_contract_pk(row, 9, 'NEW')
                 customer_contract_details_exp(row, 10, 'NEW')
+                customer_contract_details_supplier_code(row, 11, 'NEW')
                 customer_contract_details_supplier_contract(row, 12, 'NEW')
                 customer_contract_details_supplier_delivery_pattern(row, 14, 'NEW')
             # Conditional for MOD parts
