@@ -838,6 +838,24 @@ def ttc_parts(master_files, path):
                     print ('Exp WEST Field mod reference check --- Fail')
                     update_df('MOD', 'WEST Fields (Imp/Exp)', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', exp_west_fields + ', ' + imp_west_fields, ', '.join(list(set(backup_exp_west_fields)) + list(set(backup_imp_west_fields))), 'Imp/Exp WEST Field combination already registered in system')
 
+    def ttc_parts_discontinued(cell_row, cell_col):
+        part_no = PRIMARY_KEY_1
+        discontinue_list = []
+
+        for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
+            if part_no == str(selected['backup_0'].sheet_by_index(0).cell_value(row, 3)):
+                discontinue_list.append((
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 8)
+                ))
+
+        if 'N' in [tuple[1] for tuple in discontinue_list]:
+            print ('Discontinued check --- Pass')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no, discontinue_list, 'Part has contract that has not been discontinued')
+        else:
+            print ('Discontinued check --- Fail')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no, discontinue_list, 'Part does not have contract that has not been discontinued')
+
     # Print required masters for checking
 
     check_dict = {
@@ -1062,6 +1080,7 @@ def ttc_parts(master_files, path):
                         check_maximum_length(row, 'MOD')
                         check_compulsory_fields(row, 'MOD')
                         ttc_parts_duplicate_key(row, 2, 'MOD')
+                        ttc_parts_discontinued(row, 2)
 
                         # Column specific checks
                         for col in cols_to_check:
