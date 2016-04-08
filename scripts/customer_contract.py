@@ -331,12 +331,12 @@ def customer_contract(master_files, path):
                     if module_group_code == tuple[0]:
                         customer_code_list.append(tuple[1])
 
-            if list(set(customer_code_list))[0] == master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1):
+            if len(list(set(customer_code_list))) < 1:
+                print ('Cross Dock Flag check 2 --- Fail')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(customer_code_list)), 'Module Group Code not found in system')
+            elif list(set(customer_code_list))[0] == master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1):
                 print ('Cross Dock Flag check 2 --- Pass')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(customer_code_list)), 'All parts in module group from same customer')
-            elif len(list(set(customer_code_list))) < 1:
-                print ('Cross Dock Flag check 2 --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(customer_code_list)), 'Module Group Code not found in system')
             else:
                 print ('Cross Dock Flag check 2 --- Fail')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(customer_code_list)), 'If Cross Dock Flag = Y, all parts in the module group must be from the same customer')
