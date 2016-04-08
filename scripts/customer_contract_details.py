@@ -1068,45 +1068,46 @@ def customer_contract_details(master_files, path):
                     print('Revive check (Multiple Customer Contract) --- Fail (Check if other customer contracts have been discontinued)')
                     update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_common, 'Revive: Multiple Customer Contract that are not discontinued, no MOD request to discontinue parts')
 
-            # Check if Customer Contract has been discontinued
-            customer_contract_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3)
-
-            backup_customer_contract_no = ()
-
-            for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):
-                if selected['backup_7'].sheet_by_index(0).cell_value(row, 2) == customer_contract_no:
-                    backup_customer_contract_no = (
-                        selected['backup_7'].sheet_by_index(0).cell_value(row, 2),
-                        selected['backup_7'].sheet_by_index(0).cell_value(row, 16)
-                    )
-
-            try:
-                for row in range(10, additional['TNM_IMP_CUSTOMER_CONTRACT'].nrows):
-                    if additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2) == customer_contract_no:
-                        backup_customer_contract_no = (
-                            additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2),
-                            additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 16)
-                        )
-            except KeyError:
-                pass
-
-            if backup_customer_contract_no == ():
-                print('Revive check (Customer Contract Discontinue) --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Cannot find customer contract no.')
-            elif backup_customer_contract_no[1] == 'N':
-                print('Revive check (Customer Contract Discontinue) --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract is not discontinued')
-            elif backup_customer_contract_no[1] == 'Y':
-                print('Revive check (Customer Contract Discontinue) --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract has been discontinued, request user to revive customer contract on screen')
-            else:
-                print('Revive check (Customer Contract Discontinue) --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Strange Error')
-
         # Wrong input
         else:
             print ('Discontinue Indicator check --- Fail (Re-check Input (Y/N))')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'Fail', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Input not Y or N')
+
+    # Check if Customer Contract has been discontinued
+    def customer_contract_details_customer_contract_3(cell_row, cell_col, new_mod):
+        customer_contract_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+
+        backup_customer_contract_no = ()
+
+        for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):
+            if selected['backup_7'].sheet_by_index(0).cell_value(row, 2) == customer_contract_no:
+                backup_customer_contract_no = (
+                    selected['backup_7'].sheet_by_index(0).cell_value(row, 2),
+                    selected['backup_7'].sheet_by_index(0).cell_value(row, 16)
+                )
+
+        try:
+            for row in range(10, additional['TNM_IMP_CUSTOMER_CONTRACT'].nrows):
+                if additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2) == customer_contract_no:
+                    backup_customer_contract_no = (
+                        additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 16)
+                    )
+        except KeyError:
+            pass
+
+        if backup_customer_contract_no == ():
+            print('Revive check (Customer Contract Discontinue) --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Cannot find customer contract no.')
+        elif backup_customer_contract_no[1] == 'N':
+            print('Revive check (Customer Contract Discontinue) --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract is not discontinued')
+        elif backup_customer_contract_no[1] == 'Y':
+            print('Revive check (Customer Contract Discontinue) --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract has been discontinued, request user to revive customer contract on screen')
+        else:
+            print('Revive check (Customer Contract Discontinue) --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Strange Error')
 
     # Print required masters for checking
 
@@ -1245,6 +1246,7 @@ def customer_contract_details(master_files, path):
                 customer_contract_details_part_no_2(row, 3, 'NEW')
                 customer_contract_details_customer_contract_1(row, 5, 'NEW')
                 customer_contract_details_customer_contract_2(row, 3, 'NEW')
+                customer_contract_details_customer_contract_3(row, 5, 'NEW')
                 # customer_contract_details_shipping_route(row, 5)
                 customer_contract_details_imp(row, 6, 'NEW')
                 customer_contract_details_module_group(row, 7, 'NEW')
@@ -1272,6 +1274,7 @@ def customer_contract_details(master_files, path):
                         check_maximum_length(row, 'MOD')
                         check_compulsory_fields(row, 'MOD')
                         customer_contract_details_duplicate_key(row, 3, 'MOD')
+                        customer_contract_details_customer_contract_3(row, 5, 'MOD')
 
                         # Column specific checks
                         for col in cols_to_check:

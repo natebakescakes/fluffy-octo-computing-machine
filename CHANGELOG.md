@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Added check in revive parts to check whether Customer Contract No. has been discontinued
 - Added check in Customer Contract Details to check whether Supplier Parts have been registered
 - Added discontinue check in TTC Parts Master
+- Added Customer Contract Details: Discontinued Contract check for all 'NEW' and 'MOD' rows
 
 ### Changed
 - Restructured all Master Data into its own master_data package
