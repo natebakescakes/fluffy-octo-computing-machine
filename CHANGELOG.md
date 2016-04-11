@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Updated TTC Contract: Customer Inventory Flag check with ARS B-0086 change
 - Changed algorithm for Customer Contract Details duplicate check
 - Updated Customer Contract Details to include S-0125 check
+- Changed Customer Parts: West Customer No. to reference Imp Country field
 
 ### Fixed
 - Fixed Supplier Parts Master: Box Specs/M3 typecast error

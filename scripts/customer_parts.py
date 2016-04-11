@@ -320,7 +320,7 @@ def customer_parts(master_files, path):
 
     # Ensure input for WEST Imp Countries
     def customer_parts_west_invoice(cell_row, cell_col, new_mod):
-        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)[:2] in west_import.keys():
+        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2) in west_import.keys():
             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) != "":
                 print ('WEST Invoice Customer Parts No. check --- Pass (%s)')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2), 'Invoice No. input for WEST Imp Country')
