@@ -735,7 +735,8 @@ def customer_contract_details(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'TTC-Exp not found in Office Master')
 
     def customer_contract_details_supplier_code(cell_row, cell_col, new_mod):
-        part_no_supplier_code = str(master_files['xl_sheet_main'].cell_value(cell_row, 3)) + str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+        supplier_code = str(master_files['xl_sheet_main'].cell_value(cell_row, 3))
+        part_no_supplier_code = supplier_code + str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
 
         supplier_parts = []
         for row in range(9, selected['backup_3'].sheet_by_index(0).nrows):
@@ -751,10 +752,10 @@ def customer_contract_details(master_files, path):
 
         if part_no_supplier_code in supplier_parts:
             print ('Supplier Code check --- Pass')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no_supplier_code, 'NA', 'Supplier Part not registered in Supplier Parts Master')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', supplier_code, 'NA', 'Supplier Part not registered in Supplier Parts Master')
         else:
             print ('Supplier Code check --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no_supplier_code, supplier_parts, 'Supplier Part not registered in Supplier Parts Master')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', supplier_code, supplier_parts, 'Supplier Part not registered in Supplier Parts Master')
 
     # Check if Customer Code is registered in Supplier Contract Master, match with Supplier code
     def customer_contract_details_supplier_contract(cell_row, cell_col, new_mod):

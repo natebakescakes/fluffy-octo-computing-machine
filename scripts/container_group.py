@@ -473,9 +473,9 @@ def container_group(master_files, path):
                     submitted_module_group.append(selected['backup_5'].sheet_by_index(0).cell_value(row, 2))
 
             try:
-                for row in range(10, additiona['TNM_MODULE_GROUP'].nrows):
-                    if additiona['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group:
-                        submitted_module_group.append(additiona['TNM_MODULE_GROUP'].cell_value(row, 2))
+                for row in range(10, additional['TNM_MODULE_GROUP'].nrows):
+                    if additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group:
+                        submitted_module_group.append(additional['TNM_MODULE_GROUP'].cell_value(row, 2))
             except KeyError:
                 pass
 
