@@ -466,7 +466,7 @@ def container_group(master_files, path):
         elif new_mod == 'MOD':
             # Check if all non-discontinued parts in CCD for Module Group No. are being MOD to discontinue in submitted CCD
             # CCD tuple = (part no., customer contract no., module group no., discontinue indicator)
-            containger_group = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)
+            container_group = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-6)
             submitted_module_group = []
             for row in range(10, selected['backup_5'].sheet_by_index(0).nrows):
                 if selected['backup_5'].sheet_by_index(0).cell_value(row, 7) == container_group:
@@ -496,7 +496,7 @@ def container_group(master_files, path):
             try:
                 for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
                     if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD':
-                        submitted_customer_contract_details.append((additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8)))
+                        submitted_customer_contract_details.append((additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8)))
             except KeyError:
                 if not contract_no_to_discontinue:
                     print ('Discontinue indicator check MOD --- Pass')
@@ -508,8 +508,9 @@ def container_group(master_files, path):
             # submitted CCD discontinue = (primary key concat, discontinue indicator)
             contract_no_mod_discontinue = []
             for tuple in submitted_customer_contract_details:
-                if tuple[2] == submitted_contract_no and tuple[3] == 'Y':
-                    contract_no_to_discontinue.append(tuple[0] + tuple[1])
+                for code in submitted_module_group:
+                    if tuple[2] == code and tuple[3] == 'Y':
+                        contract_no_to_discontinue.append(tuple[0] + tuple[1])
 
             # check if both lists have the same primary keys
             if not contract_no_to_discontinue and not contract_no_mod_discontinue:
@@ -517,10 +518,10 @@ def container_group(master_files, path):
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'All related CCD have already been discontinued')
             elif contract_no_to_discontinue.sort() == contract_no_mod_discontinue.sort():
                 print ('Discontinue Indicator check MOD --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([len(contract_no_to_discontinue), len(contract_no_mod_discontinue)]), 'Related Customer Contract Details are being discontinued')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([str(len(contract_no_to_discontinue)), str(len(contract_no_mod_discontinue))]), 'Related Customer Contract Details are being discontinued')
             else:
                 print ('Discontinue Indicator check MOD --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([len(contract_no_to_discontinue), len(contract_no_mod_discontinue)]), 'Before discontinue, related Customer Contract Details must be discontinued')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([str(len(contract_no_to_discontinue)), str(len(contract_no_mod_discontinue))]), 'Before discontinue, related Customer Contract Details must be discontinued')
 
     # Use colour to test columns to be MOD
     def get_mod_columns(cell_row):

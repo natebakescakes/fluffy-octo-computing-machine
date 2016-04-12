@@ -38,7 +38,8 @@ All notable changes to this project will be documented in this file.
 - Fixed variable typo in Parts Master: WEST fields check that caused program to crash
 - Proper error handling for Build-Out Master: Date check
 - Added warning for MOD reference check for blank cells but filled in system
-- Fixed Customer Contract: Cross-dock check that cause program to crash
+- Fixed Customer Contract: Cross-dock check that caused program to crash
+- Fixed Container Group: Discontinue check that caused program to crash
 
 ## [1.0.3b] - 2016-01-19
 ### Added
