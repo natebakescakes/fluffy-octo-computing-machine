@@ -228,7 +228,7 @@ def container_group(master_files, path):
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'WH Code not found in Container Group Master Backup, please check Warehouse Master on screen')
         else:
             print ('Warehouse Code check --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-5)[:2], 'Does not match Container Group Code Exp Counry')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-5)[:2], 'Does not match Container Group Code Exp Country')
 
     # Source port must match Shipping Calendar Master Exp port
     # Container Group -> Module Group -> CCD -> TTC Contract -> Shipping Calendar
@@ -242,21 +242,27 @@ def container_group(master_files, path):
             if selected['backup_5'].sheet_by_index(0).cell_value(row, 7) == container_group:
                 module_group_list.append(selected['backup_5'].sheet_by_index(0).cell_value(row, 2))
 
-        module_group_list = list(set(module_group_list)) # Remove duplicates
-
         try:
             for row in range(10, additional['TNM_MODULE_GROUP'].nrows):
-                if additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group and additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'NEW':
+                if additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'NEW':
+
                     module_group_list.append(additional['TNM_MODULE_GROUP'].cell_value(row, 2))
-                elif additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'MOD' and additional['TNM_MODULE_GROUP'].cell_value(row, 2) in module_group_list and additional['TNM_MODULE_GROUP'].cell_value(row, 7) != container_group:
+
+                elif additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'MOD' and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 2) in module_group_list and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 7) != container_group:
+
                     module_group_list.remove(additional['TNM_MODULE_GROUP'].cell_value(row, 2))
-                elif additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'MOD' and additional['TNM_MODULE_GROUP'].cell_value(row, 2) not in module_group_list and additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group:
+
+                elif additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'MOD' and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 2) not in module_group_list and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group:
+
                     module_group_list.append(additional['TNM_MODULE_GROUP'].cell_value(row, 2))
 
         except KeyError:
             pass
-
-        module_group_list = list(set(module_group_list)) # Remove duplicates
 
         if len(module_group_list) == 0:
             print ('Source Port check --- Fail')
@@ -264,27 +270,60 @@ def container_group(master_files, path):
             return
 
         # Get list of TTC Contracts to check
+        # TTC Contract: (P/N, Contract No., TTC Contract)
         ttc_contract_list = []
         for module_group_code in module_group_list: # for every module group to be checked
             for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-                if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code:
-                    ttc_contract_list.append(selected['backup_0'].sheet_by_index(0).cell_value(row, 9))
-
-            ttc_contract_list = list(set(ttc_contract_list)) # Remove duplicates
+                if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code and \
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
+                    ttc_contract_list.append(
+                        (selected['backup_0'].sheet_by_index(0).cell_value(row, 3),
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 9))
+                    )
 
             try:
                 for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
-                    if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'NEW':
-                        ttc_contract_list.append(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
-                    elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9) not in ttc_contract_list:
-                        ttc_contract_list.append(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
-                    elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9) in ttc_contract_list and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) != module_group_code:
-                        ttc_contract_list.remove(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                    if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and \
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'NEW':
+
+                        ttc_contract_list.append(
+                            (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                        )
+
+                    # Account for MOD module group
+                    elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and \
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and \
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8) == 'N':
+
+                        for ttc_contract_tuple in ttc_contract_list:
+                            if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3) == ttc_contract_tuple[0] and \
+                                additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5) == ttc_contract_tuple[1]:
+                                ttc_contract_list.remove(ttc_contract_tuple)
+
+                        ttc_contract_list.append(
+                            (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                        )
+
+                    # Account for discontinue parts
+                    elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and \
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8) == 'Y' and \
+                        (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)) in ttc_contract_list:
+
+                        ttc_contract_list.remove(
+                            (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                        )
 
             except KeyError:
                 pass
-
-        ttc_contract_list = list(set(ttc_contract_list)) # Remove duplicates
 
         if len(ttc_contract_list) == 0:
             print ('Source Port check --- Fail')
@@ -293,24 +332,38 @@ def container_group(master_files, path):
 
         # Get list of Shipping Routes to check
         shipping_route_list = []
-        for ttc_contract_no in ttc_contract_list: # for every ttc contract to be checked
+        for ttc_contract_no in set(x[2] for x in ttc_contract_list): # for every ttc contract to be checked
             for row in range(9, selected['backup_4'].sheet_by_index(0).nrows):
                 if selected['backup_4'].sheet_by_index(0).cell_value(row, 2) == ttc_contract_no:
-                    shipping_route_list.append(selected['backup_4'].sheet_by_index(0).cell_value(row, 14))
-
-            shipping_route_list = list(set(shipping_route_list)) # Remove duplicates
+                    shipping_route_list.append(
+                        (selected['backup_4'].sheet_by_index(0).cell_value(row, 2),
+                        selected['backup_4'].sheet_by_index(0).cell_value(row, 14))
+                    )
 
             try:
                 for row in range(9, additional['TNM_TTC_CONTRACT'].nrows):
-                    if additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_no and additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'NEW':
-                        shipping_route_list.append(additional['TNM_TTC_CONTRACT'].cell_value(row, 14))
-                    elif additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'MOD' and additional['TNM_TTC_CONTRACT'].cell_value(row, 14) in shipping_route_list and additional['TNM_TTC_CONTRACT'].cell_value(row, 2) != ttc_contract_no:
-                        shipping_route_list.remove(additional['TNM_TTC_CONTRACT'].cell_value(row, 14))
+                    if additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_no and \
+                        additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'NEW':
+
+                        shipping_route_list.append(
+                            (additional['TNM_TTC_CONTRACT'].cell_value(row, 2),
+                            additional['TNM_TTC_CONTRACT'].cell_value(row, 14))
+                        )
+
+                    elif additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'MOD' and \
+                        additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_no:
+
+                        for entry in shipping_route_list:
+                            if entry[0] == ttc_contract_no:
+                                shipping_route_list.remove(entry)
+
+                        shipping_route_list.append(
+                            (additional['TNM_TTC_CONTRACT'].cell_value(row, 2),
+                            additional['TNM_TTC_CONTRACT'].cell_value(row, 14))
+                        )
 
             except KeyError:
                 pass
-
-        shipping_route_list = list(set(shipping_route_list)) # Remove duplicates
 
         if len(shipping_route_list) == 0:
             print ('Source Port check --- Fail')
@@ -319,7 +372,7 @@ def container_group(master_files, path):
 
         # Get list of Exp Port to check
         port_list = []
-        for shipping_route in shipping_route_list: # for every ttc contract to be checked
+        for shipping_route in set(x[1] for x in shipping_route_list): # for every ttc contract to be checked
             for row in range(9, selected['backup_8'].sheet_by_index(0).nrows):
                 if selected['backup_8'].sheet_by_index(0).cell_value(row, 2) == shipping_route:
                     port_list.append(selected['backup_8'].sheet_by_index(0).cell_value(row, 6))
@@ -348,21 +401,27 @@ def container_group(master_files, path):
             if selected['backup_5'].sheet_by_index(0).cell_value(row, 7) == container_group:
                 module_group_list.append(selected['backup_5'].sheet_by_index(0).cell_value(row, 2))
 
-        module_group_list = list(set(module_group_list)) # Remove duplicates
-
         try:
             for row in range(10, additional['TNM_MODULE_GROUP'].nrows):
-                if additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group and additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'NEW':
+                if additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'NEW':
+
                     module_group_list.append(additional['TNM_MODULE_GROUP'].cell_value(row, 2))
-                elif additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'MOD' and additional['TNM_MODULE_GROUP'].cell_value(row, 2) in module_group_list and additional['TNM_MODULE_GROUP'].cell_value(row, 7) != container_group:
+
+                elif additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'MOD' and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 2) in module_group_list and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 7) != container_group:
+
                     module_group_list.remove(additional['TNM_MODULE_GROUP'].cell_value(row, 2))
-                elif additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'MOD' and additional['TNM_MODULE_GROUP'].cell_value(row, 2) not in module_group_list and additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group:
+
+                elif additional['TNM_MODULE_GROUP'].cell_value(row, 0) == 'MOD' and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 2) not in module_group_list and \
+                    additional['TNM_MODULE_GROUP'].cell_value(row, 7) == container_group:
+
                     module_group_list.append(additional['TNM_MODULE_GROUP'].cell_value(row, 2))
 
         except KeyError:
             pass
-
-        module_group_list = list(set(module_group_list)) # Remove duplicates
 
         if len(module_group_list) == 0:
             print ('Destination Port check --- Fail')
@@ -370,27 +429,60 @@ def container_group(master_files, path):
             return
 
         # Get list of TTC Contracts to check
+        # TTC Contract: (P/N, Contract No., TTC Contract)
         ttc_contract_list = []
         for module_group_code in module_group_list: # for every module group to be checked
             for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-                if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code:
-                    ttc_contract_list.append(selected['backup_0'].sheet_by_index(0).cell_value(row, 9))
-
-            ttc_contract_list = list(set(ttc_contract_list)) # Remove duplicates
+                if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code and \
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
+                    ttc_contract_list.append(
+                        (selected['backup_0'].sheet_by_index(0).cell_value(row, 3),
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 9))
+                    )
 
             try:
                 for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
-                    if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'NEW':
-                        ttc_contract_list.append(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
-                    elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9) not in ttc_contract_list:
-                        ttc_contract_list.append(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
-                    elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9) in ttc_contract_list and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) != module_group_code:
-                        ttc_contract_list.remove(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                    if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and \
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'NEW':
+
+                        ttc_contract_list.append(
+                            (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                        )
+
+                    # Account for MOD module group
+                    elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and \
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and \
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8) == 'N':
+
+                        for ttc_contract_tuple in ttc_contract_list:
+                            if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3) == ttc_contract_tuple[0] and \
+                                additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5) == ttc_contract_tuple[1]:
+                                ttc_contract_list.remove(ttc_contract_tuple)
+
+                        ttc_contract_list.append(
+                            (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                        )
+
+                    # Account for discontinue parts
+                    elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and \
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8) == 'Y' and \
+                        (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)) in ttc_contract_list:
+
+                        ttc_contract_list.remove(
+                            (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                        )
 
             except KeyError:
                 pass
-
-        ttc_contract_list = list(set(ttc_contract_list)) # Remove duplicates
 
         if len(ttc_contract_list) == 0:
             print ('Destination Port check --- Fail')
@@ -399,24 +491,38 @@ def container_group(master_files, path):
 
         # Get list of Shipping Routes to check
         shipping_route_list = []
-        for ttc_contract_no in ttc_contract_list: # for every ttc contract to be checked
+        for ttc_contract_no in set(x[2] for x in ttc_contract_list): # for every ttc contract to be checked
             for row in range(9, selected['backup_4'].sheet_by_index(0).nrows):
                 if selected['backup_4'].sheet_by_index(0).cell_value(row, 2) == ttc_contract_no:
-                    shipping_route_list.append(selected['backup_4'].sheet_by_index(0).cell_value(row, 14))
-
-            shipping_route_list = list(set(shipping_route_list)) # Remove duplicates
+                    shipping_route_list.append(
+                        (selected['backup_4'].sheet_by_index(0).cell_value(row, 2),
+                        selected['backup_4'].sheet_by_index(0).cell_value(row, 14))
+                    )
 
             try:
                 for row in range(9, additional['TNM_TTC_CONTRACT'].nrows):
-                    if additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_no and additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'NEW':
-                        shipping_route_list.append(additional['TNM_TTC_CONTRACT'].cell_value(row, 14))
-                    elif additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'MOD' and additional['TNM_TTC_CONTRACT'].cell_value(row, 14) in shipping_route_list and additional['TNM_TTC_CONTRACT'].cell_value(row, 2) != ttc_contract_no:
-                        shipping_route_list.remove(additional['TNM_TTC_CONTRACT'].cell_value(row, 14))
+                    if additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_no and \
+                        additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'NEW':
+
+                        shipping_route_list.append(
+                            (additional['TNM_TTC_CONTRACT'].cell_value(row, 2),
+                            additional['TNM_TTC_CONTRACT'].cell_value(row, 14))
+                        )
+
+                    elif additional['TNM_TTC_CONTRACT'].cell_value(row, 0) == 'MOD' and \
+                        additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_no:
+
+                        for entry in shipping_route_list:
+                            if entry[0] == ttc_contract_no:
+                                shipping_route_list.remove(entry)
+
+                        shipping_route_list.append(
+                            (additional['TNM_TTC_CONTRACT'].cell_value(row, 2),
+                            additional['TNM_TTC_CONTRACT'].cell_value(row, 14))
+                        )
 
             except KeyError:
                 pass
-
-        shipping_route_list = list(set(shipping_route_list)) # Remove duplicates
 
         if len(shipping_route_list) == 0:
             print ('Destination Port check --- Fail')
@@ -425,7 +531,7 @@ def container_group(master_files, path):
 
         # Get list of Exp Port to check
         port_list = []
-        for shipping_route in shipping_route_list: # for every ttc contract to be checked
+        for shipping_route in set(x[1] for x in shipping_route_list): # for every ttc contract to be checked
             for row in range(9, selected['backup_8'].sheet_by_index(0).nrows):
                 if selected['backup_8'].sheet_by_index(0).cell_value(row, 2) == shipping_route:
                     port_list.append(selected['backup_8'].sheet_by_index(0).cell_value(row, 8))
