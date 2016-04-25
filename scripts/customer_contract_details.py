@@ -527,6 +527,205 @@ def customer_contract_details(master_files, path):
             print ('Module Group Code check 3 --- Pass')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_group_code, ms_flag, 'MS Flag = M, no check required')
 
+    def customer_contract_details_no_unpack(cell_row, cell_col, new_mod):
+        """
+        Check if other Customer Contract which has same Module Group have
+        different Imp WH No Unpack Flag from this Customer Contract
+        Check if other Customer Contract which has same Module Group have
+        different Imp WareHouse Code from this Customer Contract
+        """
+        customer_contract_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2)
+        module_group = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+
+        no_unpack_flag, imp_warehouse_code, business_type = None, None, None
+        for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):
+            if selected['backup_7'].sheet_by_index(0).cell_value(row, 2) == customer_contract_no:
+                business_type = selected['backup_7'].sheet_by_index(0).cell_value(row, 6)
+                no_unpack_flag = selected['backup_7'].sheet_by_index(0).cell_value(row, 7)
+                imp_warehouse_code = selected['backup_7'].sheet_by_index(0).cell_value(row, 14)
+
+        if no_unpack_flag == None:
+            try:
+                for row in range(10, additional['TNM_IMP_CUSTOMER_CONTRACT'].nrows):
+                    if additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2) == customer_contract_no:
+                        business_type = additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 6)
+                        no_unpack_flag = additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 7)
+                        imp_warehouse_code = additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 14)
+            except KeyError:
+                pass
+
+        if no_unpack_flag == None and imp_warehouse_code == None:
+            print ('Imp WH No Unpack Flag check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_group, customer_contract_no, 'Customer Contract No. cannot be found')
+            return
+
+        # Get list of customer contract related to submitted module group code from backup
+        # Conditions: Not discontinued
+        # Get list of customer contract related to submitted module group code from submitted
+        # Conditions: Not discontinued, NEW row
+        temp_list_1 = []
+        for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
+            if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group and \
+                selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
+                temp_list_1.append(
+                    (selected['backup_0'].sheet_by_index(0).cell_value(row, 3),
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 5))
+                )
+
+        for row in range(9, master_files['xl_sheet_main'].nrows):
+            # If module group is being modded, remove from temp_list_1
+            if (master_files['xl_sheet_main'].cell_value(row, 3), master_files['xl_sheet_main'].cell_value(row, 5)) in temp_list_1 and \
+                master_files['xl_sheet_main'].cell_value(row, 7) != module_group:
+                temp_list_1.remove(
+                    (master_files['xl_sheet_main'].cell_value(row, 3),
+                    master_files['xl_sheet_main'].cell_value(row, 5))
+                )
+
+            # If entry is being discontinued, remove from temp_list_1
+            if (master_files['xl_sheet_main'].cell_value(row, 3), master_files['xl_sheet_main'].cell_value(row, 5)) in temp_list_1 and \
+                master_files['xl_sheet_main'].cell_value(row, 8) == 'Y':
+                temp_list_1.remove(
+                    (master_files['xl_sheet_main'].cell_value(row, 3),
+                    master_files['xl_sheet_main'].cell_value(row, 5))
+                )
+
+            # If new entry added and module group matches, add to temp_list_1
+            if master_files['xl_sheet_main'].cell_value(row, 0) == 'NEW' and \
+                master_files['xl_sheet_main'].cell_value(row, 7) == module_group:
+                temp_list_1.append(
+                    (master_files['xl_sheet_main'].cell_value(row, 3),
+                    master_files['xl_sheet_main'].cell_value(row, 5))
+                )
+
+        customer_contract_list = []
+        for customer_contract in set([tuple[1] for tuple in temp_list_1]):
+            for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):
+                if selected['backup_7'].sheet_by_index(0).cell_value(row, 2) == customer_contract:
+                    customer_contract_list.append(
+                        (selected['backup_7'].sheet_by_index(0).cell_value(row, 2),
+                        selected['backup_7'].sheet_by_index(0).cell_value(row, 6),
+                        selected['backup_7'].sheet_by_index(0).cell_value(row, 7),
+                        selected['backup_7'].sheet_by_index(0).cell_value(row, 14))
+                    )
+
+            try:
+                for row in range(10, additional['TNM_IMP_CUSTOMER_CONTRACT'].nrows):
+                    if additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2) == customer_contract:
+                        customer_contract_list.append(
+                            (additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 6),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 7),
+                            additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 14))
+                        )
+            except KeyError:
+                pass
+
+        contracts_with_different_flag, contracts_with_different_warehouse_code = set(), set()
+        for contract_no in customer_contract_list:
+            if contract_no[2] != no_unpack_flag:
+                contracts_with_different_flag.add(contract_no[0])
+
+            if contract_no[3] != imp_warehouse_code:
+                contracts_with_different_warehouse_code.add(contract_no[0])
+
+        if len(contracts_with_different_flag) > 0:
+            print ('Imp WH No Unpack Flag check 1 --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_group, list(contracts_with_different_flag), 'Other Customer Contracts with same Module Group have different Imp WH No Unpack Flag from this Customer Contract')
+        else:
+            print ('Imp WH No Unpack Flag check 1 --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_group, list(contracts_with_different_flag), 'Other Customer Contracts with same Module Group have the same Imp WH No Unpack Flag as this Customer Contract')
+
+        if len(contracts_with_different_warehouse_code) > 0:
+            print ('Imp WH No Unpack Flag check 2 --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_group, list(contracts_with_different_warehouse_code), 'Other Customer Contracts with same Module Group have different Imp Warehouse Code from this Customer Contract')
+        else:
+            print ('Imp WH No Unpack Flag check 2 --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_group, list(contracts_with_different_warehouse_code), 'Other Customer Contracts with same Module Group have the same Imp Warehouse Code as this Customer Contract')
+
+        # If MOD, and Imp wH No Unpack Flag = 'Y', all other Customer Contracts with
+        # same Module Group Code should have similar Business Type
+        #
+        # e.g. Firm -> Firm
+        # e.g. Firm-Inventory -> Inventory/Firm-Inventory
+        # e.g. Inventory -> Inventory/Firm-Inventory
+        if no_unpack_flag == 'Y':
+            contracts_with_different_business_type = set()
+            for contract_no in customer_contract_list:
+                if business_type == 'Firm' and contract_no[1] != 'Firm':
+                    contracts_with_different_business_type.add(contract_no[0])
+                elif any(business_type == x for x in ('Firm-Inventory', 'Inventory')) and \
+                    contract_no[1] == 'Firm':
+                    contracts_with_different_business_type.add(contract_no[0])
+
+            if len(contracts_with_different_business_type) > 0:
+                print ('Imp WH No Unpack Flag check 3 --- Fail')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_group, contracts_with_different_business_type, 'Other Customer Contracts with same Module Group have different Business Type from this Customer Contract')
+            else:
+                print ('Imp WH No Unpack Flag check 3 --- Pass')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_group, contracts_with_different_business_type, 'Other Customer Contracts with same Module Group have the same Business Type as this Customer Contract')
+        else:
+            print ('Imp WH No Unpack Flag check 3 --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_group, "NA", 'Imp WH No Unpack Flag == "N" does not require this check')
+
+        # If MOD, and Imp WH No Unpack Flag is 'Y',
+        # All module groups of the customer contract must be 'Single'
+        if no_unpack_flag == 'Y':
+            temp_list_2 = []
+            for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
+                if selected['backup_0'].sheet_by_index(0).cell_value(row, 5) == customer_contract_no and \
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
+                    temp_list_2.append(
+                        (selected['backup_0'].sheet_by_index(0).cell_value(row, 3),
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                        selected['backup_0'].sheet_by_index(0).cell_value(row, 7))
+                    )
+
+            for row in range(9, master_files['xl_sheet_main'].nrows):
+                # If entry is being discontinued, remove from temp_list_2
+                if (master_files['xl_sheet_main'].cell_value(row, 3), master_files['xl_sheet_main'].cell_value(row, 5)) in temp_list_2 and \
+                    master_files['xl_sheet_main'].cell_value(row, 8) == 'Y':
+                    temp_list_2.remove(
+                        (master_files['xl_sheet_main'].cell_value(row, 3),
+                        master_files['xl_sheet_main'].cell_value(row, 5),
+                        master_files['xl_sheet_main'].cell_value(row, 7))
+                    )
+
+                # If new entry added and customer contract matches, add to temp_list_2
+                if master_files['xl_sheet_main'].cell_value(row, 0) == 'NEW' and \
+                    master_files['xl_sheet_main'].cell_value(row, 5) == customer_contract_no:
+                    temp_list_2.append(
+                        (master_files['xl_sheet_main'].cell_value(row, 3),
+                        master_files['xl_sheet_main'].cell_value(row, 5),
+                        master_files['xl_sheet_main'].cell_value(row, 7))
+                    )
+
+            module_group_list = []
+            for module_group_code in set([tuple[2] for tuple in temp_list_2]):
+                for row in range(10, selected['backup_5'].sheet_by_index(0).nrows):
+                    if selected['backup_5'].sheet_by_index(0).cell_value(row, 2) == module_group_code:
+                        module_group_list.append(
+                            (selected['backup_5'].sheet_by_index(0).cell_value(row, 2),
+                            selected['backup_5'].sheet_by_index(0).cell_value(row, 5))
+                        )
+
+                try:
+                    # Replace system whether NEW or MOD
+                    for row in range(10, additional['TNM_MODULE_GROUP'].nrows):
+                        if additional['TNM_MODULE_GROUP'].cell_value(row, 2) == module_group_code:
+                            module_group_list.append(
+                                (additional['TNM_MODULE_GROUP'].cell_value(row, 2),
+                                additional['TNM_MODULE_GROUP'].cell_value(row, 5))
+                            )
+                except KeyError:
+                    pass
+
+            if all(x[1] == 'S' for x in module_group_list):
+                print ('Imp WH No Unpack Flag check 4 --- Pass')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', module_group, module_group_list, 'All Module Groups related to this Customer Contract are Single')
+            else:
+                print ('Imp WH No Unpack Flag check 4 --- Fail')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', module_group, [x[0] for x in module_group_list if x[1] == 'M'], 'Not all Module Groups related to this Customer Contract are Single')
+
     def customer_contract_details_discontinue_new(cell_row, cell_col, new_mod):
         # Check if discontinue indicator is 'N'
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == 'N':
@@ -654,22 +853,46 @@ def customer_contract_details(master_files, path):
 
         customer_contract_details = []
         for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-            if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code and selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
-                customer_contract_details.append((selected['backup_0'].sheet_by_index(0).cell_value(row, 3), selected['backup_0'].sheet_by_index(0).cell_value(row, 5), selected['backup_0'].sheet_by_index(0).cell_value(row, 9)))
+            if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code and \
+                selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
+                customer_contract_details.append(
+                    (selected['backup_0'].sheet_by_index(0).cell_value(row, 3),
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 9))
+                )
 
         try:
             for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
-                if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'NEW':
-                    customer_contract_details.append((additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)))
-                elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD':
+                if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and \
+                    additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'NEW':
+                    customer_contract_details.append(
+                        (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                    )
+                # Account for change Module Group Code
+                elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and \
+                    additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and \
+                    additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8) == 'N':
                     for entry in customer_contract_details:
-                        if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3) == entry[0] and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5) == entry[1]:
+                        if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3) == entry[0] and \
+                            additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5) == entry[1]:
                             customer_contract_details.remove(entry)
-                    customer_contract_details.append((additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5), additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)))
+                    customer_contract_details.append(
+                        (additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9))
+                    )
+                # Account for discontinued parts
+                elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and \
+                    additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and \
+                    additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8) == 'Y':
+                        for entry in customer_contract_details:
+                            if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3) == entry[0] and \
+                                additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5) == entry[1]:
+                                customer_contract_details.remove(entry)
         except KeyError:
             pass
-
-
 
         ttc_contract_list = []
         for entry in customer_contract_details:
@@ -680,7 +903,7 @@ def customer_contract_details(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(ttc_contract_list)), 'All parts in 1 Module Group Code have same TTC Contract No.')
         else:
             print ('TTC Contract No. check 3 --- Fail (Different TTC Contract No. in same Module Group)')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(ttc_contract_list)), 'All parts in 1 Module Group Code do not have same TTC Contract No.')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_details, 'All parts in 1 Module Group Code do not have same TTC Contract No.')
 
     # For PK, 1 customer has 1 TTC contract
     def customer_contract_details_ttc_contract_pk(cell_row, cell_col, new_mod):
@@ -1251,6 +1474,7 @@ def customer_contract_details(master_files, path):
                 # customer_contract_details_shipping_route(row, 5)
                 customer_contract_details_imp(row, 6, 'NEW')
                 customer_contract_details_module_group(row, 7, 'NEW')
+                customer_contract_details_no_unpack(row, 7, 'NEW')
                 customer_contract_details_discontinue_new(row, 8, 'NEW')
                 customer_contract_details_ttc_contract_1(row, 9, 'NEW')
                 customer_contract_details_ttc_contract_2(row, 9, 'NEW')
@@ -1294,6 +1518,7 @@ def customer_contract_details(master_files, path):
                                 customer_contract_details_module_group(row, 7, 'MOD')
                                 customer_contract_details_ttc_contract_2(row, 9, 'MOD')
                                 customer_contract_details_ttc_contract_3(row, 9, 'MOD')
+                                customer_contract_details_no_unpack(row, 7, 'MOD')
                             # Mod: Discontinue Indicator
                             if col+2 == 8:
                                 customer_contract_details_discontinue_mod(row, 8, 'MOD')

@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 - Added check in Customer Contract Details to check whether Supplier Parts have been registered
 - Added discontinue check in TTC Parts Master
 - Added Customer Contract Details: Discontinued Contract check for all 'NEW' and 'MOD' rows
+- **ARS S-0125**: Added Customer Contract: Imp WH No Unpack Flag checks
+- **ARS S-0125**: Customer Contract Details: Imp WH No Unpack Flag checks
 
 ### Changed
 - Restructured all Master Data into its own master_data package
@@ -40,6 +42,8 @@ All notable changes to this project will be documented in this file.
 - Added warning for MOD reference check for blank cells but filled in system
 - Fixed Customer Contract: Cross-dock check that caused program to crash
 - Fixed Container Group: Discontinue check that caused program to crash
+- Fixed Customer Contract Details: TTC Contract check 3 to account for discontinuing parts
+- Fixed Container Group: Destination, Source Port check to account for discontinuing parts
 
 ## [1.0.3b] - 2016-01-19
 ### Added
