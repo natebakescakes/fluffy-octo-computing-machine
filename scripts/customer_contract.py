@@ -614,10 +614,10 @@ def customer_contract(master_files, path):
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'All related CCD have already been discontinued')
             elif contract_no_to_discontinue.sort() == contract_no_mod_discontinue.sort():
                 print ('Discontinue Indicator check MOD --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([len(contract_no_to_discontinue), len(contract_no_mod_discontinue)]), 'Related Customer Contract Details are being discontinued')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([str(len(contract_no_to_discontinue)), str(len(contract_no_mod_discontinue))]), 'Related Customer Contract Details are being discontinued')
             else:
                 print ('Discontinue Indicator check MOD --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([len(contract_no_to_discontinue), len(contract_no_mod_discontinue)]), 'Before discontinue, related Customer Contract Details must be discontinued')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([str(len(contract_no_to_discontinue)), str(len(contract_no_mod_discontinue))]), 'Before discontinue, related Customer Contract Details must be discontinued')
 
     # Use colour to test columns to be MOD
     def get_mod_columns(cell_row):

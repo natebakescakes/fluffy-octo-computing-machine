@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 - Added Customer Contract Details: Discontinued Contract check for all 'NEW' and 'MOD' rows
 - **ARS S-0125**: Added Customer Contract: Imp WH No Unpack Flag checks
 - **ARS S-0125**: Customer Contract Details: Imp WH No Unpack Flag checks
+- Add Module Group, TTC Contract checks to Revive check
+- New payment terms registered (SC2016030170)
 
 ### Changed
 - Restructured all Master Data into its own master_data package
@@ -44,6 +46,9 @@ All notable changes to this project will be documented in this file.
 - Fixed Container Group: Discontinue check that caused program to crash
 - Fixed Customer Contract Details: TTC Contract check 3 to account for discontinuing parts
 - Fixed Container Group: Destination, Source Port check to account for discontinuing parts
+- Fixed Customer Contract: Discontinue check that caused program to crash
+- Updated Customer Contract Details: Customer Contract check to consider false positives
+- Updated Customer Contract Details: No Unpack Flag check to consider changes in Module Group Master
 
 ## [1.0.3b] - 2016-01-19
 ### Added

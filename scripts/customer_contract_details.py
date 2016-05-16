@@ -712,6 +712,10 @@ def customer_contract_details(master_files, path):
                     # Replace system whether NEW or MOD
                     for row in range(10, additional['TNM_MODULE_GROUP'].nrows):
                         if additional['TNM_MODULE_GROUP'].cell_value(row, 2) == module_group_code:
+                            for module_group in module_group_list:
+                                if module_group[0] == additional['TNM_MODULE_GROUP'].cell_value(row, 2):
+                                    module_group_list.remove(module_group)
+
                             module_group_list.append(
                                 (additional['TNM_MODULE_GROUP'].cell_value(row, 2),
                                 additional['TNM_MODULE_GROUP'].cell_value(row, 5))
@@ -1248,7 +1252,7 @@ def customer_contract_details(master_files, path):
 
         # Change from 'Y' to 'N' (Revive)
         elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == 'N':
-            if (any(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3).find(x) != -1 for x in ('0TBSM', 'TBSJ', 'TBSQ', 'TBSR'))):
+            if (any(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3).find(x) != -1 for x in ('0TBSM', 'TBSJ', 'TBSJ2', 'TBJ1', 'TBSQ', 'TBSR'))):
                 supplier_parts_back = {}
                 for row in range(9, selected['backup_3'].sheet_by_index(0).nrows):
                     # supplier_parts_back = [(concat(part no. + supplier code), supplier back no.), ...]
@@ -1300,6 +1304,7 @@ def customer_contract_details(master_files, path):
     # Check if Customer Contract has been discontinued
     def customer_contract_details_customer_contract_3(cell_row, cell_col, new_mod):
         customer_contract_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+        discontinue_indicator = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3)
 
         backup_customer_contract_no = ()
 
@@ -1326,9 +1331,12 @@ def customer_contract_details(master_files, path):
         elif backup_customer_contract_no[1] == 'N':
             print('Revive check (Customer Contract Discontinue) --- Pass')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract is not discontinued')
-        elif backup_customer_contract_no[1] == 'Y':
+        elif backup_customer_contract_no[1] == 'Y' and discontinue_indicator == 'N':
             print('Revive check (Customer Contract Discontinue) --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract has been discontinued, request user to revive customer contract on screen')
+        elif backup_customer_contract_no[1] == 'Y' and discontinue_indicator == 'Y':
+            print('Revive check (Customer Contract Discontinue) --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract is being discontinued as well')
         else:
             print('Revive check (Customer Contract Discontinue) --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Strange Error')
@@ -1500,6 +1508,7 @@ def customer_contract_details(master_files, path):
                         check_compulsory_fields(row, 'MOD')
                         customer_contract_details_duplicate_key(row, 3, 'MOD')
                         customer_contract_details_customer_contract_3(row, 5, 'MOD')
+                        customer_contract_details_no_unpack(row, 7, 'MOD')
 
                         # Column specific checks
                         for col in cols_to_check:
@@ -1518,10 +1527,15 @@ def customer_contract_details(master_files, path):
                                 customer_contract_details_module_group(row, 7, 'MOD')
                                 customer_contract_details_ttc_contract_2(row, 9, 'MOD')
                                 customer_contract_details_ttc_contract_3(row, 9, 'MOD')
-                                customer_contract_details_no_unpack(row, 7, 'MOD')
+
                             # Mod: Discontinue Indicator
                             if col+2 == 8:
                                 customer_contract_details_discontinue_mod(row, 8, 'MOD')
+                                if master_files['xl_sheet_main'].cell_value(row, col+2) == 'N':
+                                    customer_contract_details_module_group(row, 7, 'MOD')
+                                    customer_contract_details_ttc_contract_2(row, 9, 'MOD')
+                                    customer_contract_details_ttc_contract_3(row, 9, 'MOD')
+
                             # Mod: TTC Contract
                             if col+2 == 9:
                                 customer_contract_details_ttc_contract_1(row, 9, 'MOD')

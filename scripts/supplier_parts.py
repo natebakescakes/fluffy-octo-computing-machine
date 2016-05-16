@@ -255,7 +255,7 @@ def supplier_parts(master_files, path):
         ]
 
         if (any(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2) == x for x in required_suppliers)):
-            if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) != '':
+            if all(master_files['xl_sheet_main'].cell_value(cell_row, cell_col) != y for y in ('', 'N/A', 'NA', 'N.A.')):
                 print ('Supplier Back No. check --- Pass')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2), 'Supplier Back No. inputted')
             else:

@@ -89,6 +89,7 @@ payment_terms_master = [
     'YX19',
     'YX1V',
     'YX20',
+    'YX33', # Mar '16 Submission - NEW MY Payment Term'
     'YX3W',
     'YX3X',
     'YX3Y',
