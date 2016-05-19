@@ -49,6 +49,7 @@ All notable changes to this project will be documented in this file.
 - Fixed Customer Contract: Discontinue check that caused program to crash
 - Updated Customer Contract Details: Customer Contract check to consider false positives
 - Updated Customer Contract Details: No Unpack Flag check to consider changes in Module Group Master
+- Fixed Inner Packing BOM: SPQ check that caused program to crash
 
 ## [1.0.3b] - 2016-01-19
 ### Added

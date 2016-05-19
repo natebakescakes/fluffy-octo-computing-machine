@@ -207,7 +207,10 @@ def inner_packing_bom(master_files, path):
                 part_customer_spq[selected['backup_2'].sheet_by_index(0).cell_value(row, 2) + selected['backup_2'].sheet_by_index(0).cell_value(row, 3)] = selected['backup_2'].sheet_by_index(0).cell_value(row, 10)
 
             for row in range(9, additional['TNM_CUSTOMER_PARTS_MASTER'].nrows):
-                part_customer_spq[str(additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2)) + additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3)] = additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 11)
+                if additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 11) != '':
+                    part_customer_spq[str(additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2)) + additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3)] = additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 11)
+                else:
+                    part_customer_spq[str(additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2)) + additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3)] = additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 10)
 
         except KeyError:
             for row in range(9, selected['backup_2'].sheet_by_index(0).nrows):
