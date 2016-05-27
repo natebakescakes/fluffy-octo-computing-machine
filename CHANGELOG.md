@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.0.3c] - TBA
+## [1.0.4] - 2016-05-27
 ### Added
 - New payment terms registered (SC2016010161)
 - Added check in revive parts to check whether Customer Contract No. has been discontinued
