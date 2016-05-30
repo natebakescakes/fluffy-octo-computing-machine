@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - TBC
+### Added
+- Added Submitted MRS vs Temp Folder check, use --crosscheck flag (currently only checks values)
+
+### Changed
+- Removed pre-SRBQ Apply Date and Non-English Supplier Parts Name support
+
 ## [1.0.4] - 2016-05-27
 ### Added
 - New payment terms registered (SC2016010161)

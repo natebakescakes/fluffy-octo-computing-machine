@@ -9,7 +9,8 @@ import xlrd
 import xlsxwriter
 import pandas as pd
 
-from master_check import master_check, master_check_old
+from master_check import master_check
+import crosscheck
 
 SHEET_NAMES = [
     'TNM_IMP_BUILDOUT',
@@ -90,13 +91,13 @@ def results_format(writer):
 if __name__ == "__main__":
 
     parser = OptionParser()
-    parser.set_defaults(check_all=True, old_new=True)
+    parser.set_defaults(check_single=False, crosscheck=False)
     parser.add_option("-s", "--single",
-                      action="store_false", dest="check_all",
+                      action="store_true", dest="check_single",
                       help="Check a single master sheet, default is all sheets")
-    parser.add_option("-o", "--old",
-                      action="store_false", dest="old_new",
-                      help="Set master type to be before Non-Englih and Next SRBQ Apply Date ARS")
+    parser.add_option("-c", "--crosscheck",
+                      action="store_true", dest="crosscheck",
+                      help="Compare latest submitted MRS with Temp folder")
 
     (options, args) = parser.parse_args()
 
@@ -120,16 +121,24 @@ if __name__ == "__main__":
         index = input('Enter index of file you wish to access: ')
         master_files['xl_workbook'] = xlrd.open_workbook(os.path.join(path, '1) Submit', os.listdir(os.path.join(path, '1) Submit'))[int(index)]), formatting_info=True)
 
-        if options.check_all:
-            # Check whether valid sheet name input
-            for sheet_name in master_files['xl_workbook'].sheet_names():
-                if sheet_name in SHEET_NAMES:
-                    pass
-                else:
-                    print ('%s is not a valid sheet name. Please modify it before running again.' % sheet_name)
-                    os.system('pause')
-                    sys.exit()
+        # Check whether valid sheet name input
+        for sheet_name in master_files['xl_workbook'].sheet_names():
+            if sheet_name in SHEET_NAMES:
+                pass
+            else:
+                print ('%s is not a valid sheet name. Please modify it before running again.' % sheet_name)
+                os.system('pause')
+                sys.exit()
 
+        if options.crosscheck:
+            if crosscheck.crosscheck(master_files['xl_workbook'], os.path.join(path, '5) Temp')):
+                print ('Temp File OK')
+            else:
+                print ('Temp File FAIL')
+            os.system('pause')
+            sys.exit()
+
+        if not options.check_single:
             writer = pd.ExcelWriter(os.path.join(path, results_filename()), engine = 'xlsxwriter')
 
             for i, sheet in enumerate(master_files['xl_workbook'].sheets()):
@@ -146,10 +155,7 @@ if __name__ == "__main__":
 
                 print ('Checking %s' % master_type)
 
-                if options.old_new:
-                    df = master_check(master_type, master_files, path)
-                else:
-                    df = master_check_old(master_type, master_files, path)
+                df = master_check(master_type, master_files, path)
 
                 # Increment row value by 1 to align with excel rows
                 if df is not None:
