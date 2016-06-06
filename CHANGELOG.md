@@ -7,6 +7,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Removed pre-SRBQ Apply Date and Non-English Supplier Parts Name support
+- Changed Customer Parts Master: IP Specs Apply Date check to feedback warning for <MRS Upload Date>
+
+### Fixed
+- Fixed Customer Contract Details: Customer Contract 3 check issue status
+- IP Gross Weight, Parts Net Weight check, fix floating point issue
 
 ## [1.0.4] - 2016-05-27
 ### Added

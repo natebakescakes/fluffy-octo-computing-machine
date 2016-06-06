@@ -438,7 +438,7 @@ def ttc_parts(master_files, path):
                 gross_weight = list(set(gross_weight_list))[0]
             else:
                 for spq, gross_weight in all_spq_gross_weight:
-                    if float(gross_weight) / int(spq) >= float(net_weight):
+                    if round(float(gross_weight) / int(spq), 5) >= float(net_weight):
                         validate_count += 1
 
                 if validate_count == len(all_spq_gross_weight):
@@ -450,7 +450,7 @@ def ttc_parts(master_files, path):
 
                 return
 
-        if gross_weight / spq >= net_weight:
+        if round(gross_weight / spq, 5) >= net_weight:
             print ('Parts Net Weight check --- Pass (NW: %.5f)' % (net_weight))
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', net_weight, str([spq, gross_weight]), 'Gross Weight / SPQ >= Parts Net Weight')
         else:

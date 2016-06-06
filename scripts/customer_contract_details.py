@@ -1335,8 +1335,8 @@ def customer_contract_details(master_files, path):
             print('Revive check (Customer Contract Discontinue) --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract has been discontinued, request user to revive customer contract on screen')
         elif backup_customer_contract_no[1] == 'Y' and discontinue_indicator == 'Y':
-            print('Revive check (Customer Contract Discontinue) --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract is being discontinued as well')
+            print('Revive check (Customer Contract Discontinue) --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Customer Contract is being discontinued as well')
         else:
             print('Revive check (Customer Contract Discontinue) --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Strange Error')

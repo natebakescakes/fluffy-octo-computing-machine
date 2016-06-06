@@ -4,6 +4,8 @@ from os import listdir
 import xlrd
 import pandas as pd
 
+# TODO: Remove all NEW Conditions, Build-out Master only MOD
+
 # Build-out - Open required workbooks and check against
 def build_out(master_files, path):
 

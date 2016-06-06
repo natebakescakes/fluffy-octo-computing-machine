@@ -478,7 +478,7 @@ def customer_parts(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', 'GW: ' + str(ip_gross_weight) + ', SPQ: ' + str(spq), 'NA', 'Cannot find P/N in Part Master (Submitted/System)')
             return
 
-        if ip_gross_weight / spq >= net_weight:
+        if round(ip_gross_weight / spq, 5) >= net_weight:
             print ('Gross Weight check --- Pass (GW: %.3f, SPQ: %d, NW: %.3f)' % (ip_gross_weight, spq, net_weight))
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', 'GW: ' + str(ip_gross_weight) + ', SPQ: ' + str(spq), str(net_weight), 'IP Gross Weight / SPQ >= Parts Net Weight')
         else:
@@ -488,8 +488,8 @@ def customer_parts(master_files, path):
     # IP Specs apply date for new parts should be <MRS Upload Date>
     def customer_parts_ip_apply_date_new(cell_row, cell_col, new_mod):
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col).upper() == '<MRS UPLOAD DATE>':
-            print ('IP Specs Apply Date check --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Apply date is <MRS UPLOAD DATE>')
+            print ('IP Specs Apply Date check --- Warning (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Please change <MRS Upload Date> to Current Date before upload')
         else:
             print ('IP Specs Apply Date check --- Fail (%s must be <MRS Upload Date> for New Parts)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Apply date must be <MRS UPLOAD DATE> for NEW Parts')
