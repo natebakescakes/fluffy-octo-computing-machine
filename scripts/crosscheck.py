@@ -39,12 +39,12 @@ def crosscheck(submitted_wb, temp_dir):
 
     for temp_sheet, submitted_sheet in zip(temp_sheets, submitted_sheets):
         if all(temp_sheet.cell_value(row, col) == submitted_sheet.cell_value(row, col) \
-            for row in range(9, temp_sheet.nrows) \
-            for col in range(temp_sheet.ncols)):
+            for row in range(9, submitted_sheet.nrows) \
+            for col in range(submitted_sheet.ncols)):
             return True
         else:
-            for row in range(9, temp_sheet.nrows):
-                for col in range(temp_sheet.ncols):
+            for row in range(9, submitted_sheet.nrows):
+                for col in range(submitted_sheet.ncols):
                     if temp_sheet.cell_value(row, col) != submitted_sheet.cell_value(row, col):
                         print (submitted_sheet.name,
                             row+1,

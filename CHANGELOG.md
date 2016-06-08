@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Fixed Customer Contract Details: Customer Contract 3 check issue status
 - IP Gross Weight, Parts Net Weight check, fix floating point issue
+- Catch Customer Parts Master: Imp HS Code ValueError
 
 ## [1.0.4] - 2016-05-27
 ### Added

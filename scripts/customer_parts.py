@@ -285,7 +285,12 @@ def customer_parts(master_files, path):
     # Must be alphanumeric with period or <same as exp>
     # FUTURE: check format
     def customer_parts_imp_hs_code(cell_row, cell_col, new_mod):
-        imp_hs_code = ''.join(master_files['xl_sheet_main'].cell_value(cell_row, cell_col).split('.'))
+        try:
+            imp_hs_code = ''.join(master_files['xl_sheet_main'].cell_value(cell_row, cell_col).split('.'))
+        except ValueError:
+            print ('Imp HS Code check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Must be in text format')
+            return
 
         if imp_hs_code.isalnum():
             print ('Imp HS Code check --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
