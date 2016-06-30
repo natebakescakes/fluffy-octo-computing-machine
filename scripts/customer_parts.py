@@ -434,8 +434,8 @@ def customer_parts(master_files, path):
                 print ('Order Lot Apply Date check --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), time.strftime('%d %b %Y', correct_apply_date), 'Apply date is 1st of future month')
             elif apply_date == additional_order_apply_date:
-                print ('Order Lot Apply Date check --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), time.strftime('%d %b %Y', additional_order_apply_date), 'Apply date is 1st of Current month')
+                print ('Order Lot Apply Date check --- Warning')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), time.strftime('%d %b %Y', additional_order_apply_date), 'Apply date is 1st of Current month, check with user if Additional Order is to be placed')
             else:
                 print ('Order Lot Apply Date check --- Fail (must be 1st of next month)')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(time.strftime('%d %b %Y', correct_apply_date)) + ' or ' + str(time.strftime('%d %b %Y', additional_order_apply_date)), 'Must be 1st of Next Month or Current Month')
@@ -451,7 +451,7 @@ def customer_parts(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', 'L: ' + str(box_length) + ', W: ' + str(box_width) + ', H: ' + str(box_height), 'NA', "LWH cannot be 0")
         else:
             if box_length >1 or box_width >1 or box_height >1:
-                print ('IP Specs check --- Fail (LWH should not be >1)')
+                print ('IP Specs check --- Warning (LWH should not be >1)')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', 'L: ' + str(box_length) + ', W: ' + str(box_width) + ', H: ' + str(box_height), 'NA', "LWH should not be too large (>1), please check with user")
             else:
                 print ('IP Specs check --- Pass (%.3f * %.3f * %.3f)' % (box_length, box_width, box_height))

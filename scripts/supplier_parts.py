@@ -627,6 +627,9 @@ def supplier_parts(master_files, path):
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no + ', ' + export_office_code, company_code_list, 'Company Code not registered in Parts Master, please add MOD row in Parts Master to include Company Code')
 
     def supplier_parts_discontinued(cell_row, cell_col):
+        """
+        TODO: Take into account submitted MRS for MOD parts and revive parts
+        """
         part_no_supplier_code = PRIMARY_KEY_1 + PRIMARY_KEY_2
         discontinue_list = []
 
