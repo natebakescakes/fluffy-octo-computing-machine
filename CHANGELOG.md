@@ -8,11 +8,14 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Removed pre-SRBQ Apply Date and Non-English Supplier Parts Name support
 - Changed Customer Parts Master: IP Specs Apply Date check to feedback warning for <MRS Upload Date>
+- Customer Parts Master: Orderlot Apply Date will now prompt warning if 1st of current month
+- Changed wording of Customer Contract Details: Supplier Code check
 
 ### Fixed
 - Fixed Customer Contract Details: Customer Contract 3 check issue status
 - IP Gross Weight, Parts Net Weight check, fix floating point issue
 - Catch Customer Parts Master: Imp HS Code ValueError
+- Fix check for Module Group Master: Customer Condition interaction with IN region
 
 ## [1.0.4] - 2016-05-27
 ### Added

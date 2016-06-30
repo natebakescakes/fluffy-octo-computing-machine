@@ -220,12 +220,15 @@ def module_group(master_files, path):
             for row in range(9, selected['backup_7'].sheet_by_index(0).nrows):
                 customer_list.append(selected['backup_7'].sheet_by_index(0).cell_value(row, 2))
 
-            if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) in customer_list and master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1) in master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1).split('-')[0]:
+            if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) in customer_list and \
+                (master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1) in master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1).split('-')[0] or \
+                (master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1).split('-')[0] == 'IN' and \
+                any(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1) == x for x in ('I1', 'I2', 'I3')))):
                 print ('Customer Condition check --- Pass')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), 'Customer Code is correctly input, Customer Code found in Customer Master for correct Imp Country')
             else:
                 print ('Customer Condition check --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), 'If Customer Condition = S, Customer Code must be input, found in Customer Master for correct Imp Country')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, celsl_col+1), 'If Customer Condition = S, Customer Code must be input, found in Customer Master for correct Imp Country')
         elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == 'M':
             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) == '':
                 print ('Customer Condition check --- Pass')
