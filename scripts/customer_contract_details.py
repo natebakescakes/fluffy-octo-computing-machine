@@ -1241,8 +1241,8 @@ def customer_contract_details(master_files, path):
         # Change from 'N' to 'Y' (Discontinue)
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == 'Y':
             model_bom_parts_list = []
-            for row in range(9, selected['backup_10'].sheet_by_index(0).nrows):
-                model_bom_parts_list.append(selected['backup_10'].sheet_by_index(0).cell_value(row, 7) + selected['backup_10'].sheet_by_index(0).cell_value(row, 11))
+            for row in range(9, selected['backup_9'].sheet_by_index(0).nrows):
+                model_bom_parts_list.append(selected['backup_9'].sheet_by_index(0).cell_value(row, 7) + selected['backup_9'].sheet_by_index(0).cell_value(row, 11))
 
             if part_and_contract_no not in model_bom_parts_list:
                 print ('Discontinue Indicator check --- Pass (Not in Model BOM)')
@@ -1412,7 +1412,7 @@ def customer_contract_details(master_files, path):
                     selected['backup_8'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
                     print ('Retrieved file: %s' % file)
                 if file.find('MRS_ModelBOM') != -1:
-                    selected['backup_10'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
+                    selected['backup_9'] = xlrd.open_workbook(path + '\\2) Backup\\' + file)
                     print ('Retrieved file: %s' % file)
 
         if len(selected) == len(required):
