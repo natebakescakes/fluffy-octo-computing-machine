@@ -16,6 +16,10 @@ All notable changes to this project will be documented in this file.
 - IP Gross Weight, Parts Net Weight check, fix floating point issue
 - Catch Customer Parts Master: Imp HS Code ValueError
 - Fix check for Module Group Master: Customer Condition interaction with IN region
+- Fix error in Customer Contract Details: Model BOM check
+- TTC Contract: Shipping Route check now properly considers only non-discontinued parts
+- Cleaned up Model BOM reference in Customer Contract Details: Discontinue check
+- Cleaned up Customer Contract: WEST check, fix error
 
 ## [1.0.4] - 2016-05-27
 ### Added

@@ -235,33 +235,43 @@ def customer_contract(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', PRIMARY_KEY_1, 'NA', 'No submitted CCD found')
 
     def customer_contract_west_fields(cell_row, cell_col, new_mod):
-        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2] in west_import.keys() and master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2] != 'TW':
-            if any(x != '' for x in (master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2))):
-                print ('West fields check --- Pass')
-                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2], 'WEST Fields not blank for WEST Imp Country')
-            else:
-                print ('West fields check --- Fail')
-                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2], 'WEST Fields cannot be blank for WEST Imp Country')
-        elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2] == 'TW':
-            if any(x != '' for x in (master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2))):
-                print ('West fields check --- Pass')
-                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2], 'WEST Fields not blank for WEST Imp Country')
-            else:
-                print ('West fields check --- Fail')
-                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', ', '.join([master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2], 'WEST Fields cannot be blank for WEST Imp Country (Optional for TW)')
-        else:
-            if all(x == '' for x in (master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2))):
-                print ('West fields check --- Pass')
-                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2], 'WEST Fields blank for non-WEST Imp Country')
-            else:
-                print ('West fields check --- Fail')
-                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2], 'WEST Fields should be blank for non-WEST Imp Country')
+        customer_contract_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)
+        west_section = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
 
-        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)[:2] in west_import.keys():
+        try:
+            west_sales_contract = str(int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)))
+        except ValueError:
+            west_sales_contract = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1))
+
+        forward_exchange_position = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2))
+
+        if customer_contract_no[:2] in west_import.keys() and customer_contract_no[:2] != 'TW':
+            if any(x != '' for x in (west_section, west_sales_contract, forward_exchange_position)):
+                print ('West fields check --- Pass')
+                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_section, west_sales_contract, forward_exchange_position]), customer_contract_no[:2], 'WEST Fields not blank for WEST Imp Country')
+            else:
+                print ('West fields check --- Fail')
+                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_section, west_sales_contract, forward_exchange_position]), customer_contract_no[:2], 'WEST Fields cannot be blank for WEST Imp Country')
+        elif customer_contract_no[:2] == 'TW':
+            if any(x != '' for x in (west_section, west_sales_contract, forward_exchange_position)):
+                print ('West fields check --- Pass')
+                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_section, west_sales_contract, forward_exchange_position]), customer_contract_no[:2], 'WEST Fields not blank for WEST Imp Country')
+            else:
+                print ('West fields check --- Fail')
+                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', ', '.join([west_section, west_sales_contract, forward_exchange_position]), customer_contract_no[:2], 'WEST Fields cannot be blank for WEST Imp Country (Optional for TW)')
+        else:
+            if all(x == '' for x in (west_section, west_sales_contract, forward_exchange_position)):
+                print ('West fields check --- Pass')
+                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_section, west_sales_contract, forward_exchange_position]), customer_contract_no[:2], 'WEST Fields blank for non-WEST Imp Country')
+            else:
+                print ('West fields check --- Fail')
+                update_df(new_mod, 'WEST Fields', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_section, west_sales_contract, forward_exchange_position]), customer_contract_no[:2], 'WEST Fields should be blank for non-WEST Imp Country')
+
+        if customer_contract_no[:2] in west_import.keys():
             try:
-                if int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)) == 9999999999:
+                if int(west_sales_contract) == 9999999999:
                     print ('WEST sales contract --- WARNING')
-                    update_df(new_mod, columns[3], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), 'NA', 'Please check if user if data is not to be interfaced to WEST')
+                    update_df(new_mod, columns[3], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', west_sales_contract, 'NA', 'Please check if user if data is not to be interfaced to WEST')
             except ValueError:
                 pass
 
