@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Changed Customer Parts Master: IP Specs Apply Date check to feedback warning for <MRS Upload Date>
 - Customer Parts Master: Orderlot Apply Date will now prompt warning if 1st of current month
 - Changed wording of Customer Contract Details: Supplier Code check
+- Account for possibility that TTC Contract/Module Group check will not have any active parts
 
 ### Fixed
 - Fixed Customer Contract Details: Customer Contract 3 check issue status
