@@ -21,6 +21,8 @@ All notable changes to this project will be documented in this file.
 - TTC Contract: Shipping Route check now properly considers only non-discontinued parts
 - Cleaned up Model BOM reference in Customer Contract Details: Discontinue check
 - Cleaned up Customer Contract: WEST check, fix error
+- Fixed error message of Container Group: Destination Port check
+- Fixed Customer Contract Details: Duplicate Part check
 
 ## [1.0.4] - 2016-05-27
 ### Added

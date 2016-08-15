@@ -167,7 +167,9 @@ def customer_contract_details(master_files, path):
     def customer_contract_details_duplicate_key(cell_row, cell_col, new_mod):
         concat_list = []
         for row in range(9, master_files['xl_sheet_main'].nrows):
-            if master_files['xl_sheet_main'].cell_value(row, 0) != '':
+            if master_files['xl_sheet_main'].cell_value(row, 0) != '' and \
+                master_files['xl_sheet_main'].cell_value(row, 3) == master_files['xl_sheet_main'].cell_value(cell_row, 3) and \
+                master_files['xl_sheet_main'].cell_value(row, 5) == master_files['xl_sheet_main'].cell_value(cell_row, 5):
                 concat_list.append((master_files['xl_sheet_main'].cell_value(row, 0), str(master_files['xl_sheet_main'].cell_value(row, 3)) + master_files['xl_sheet_main'].cell_value(row, 5)))
 
         if len(set(concat_list)) == len(concat_list):
@@ -453,41 +455,46 @@ def customer_contract_details(master_files, path):
                 print('TTC Parts No. check 1 --- Fail (Part not found in system)')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Not registered in system and no submitted Module Group Master')
 
-        # If Customer Contract cross dock flag = Y, all parts in the module group must be from the same customer
-        cross_dock = {}
-        try:
-            for row in range(10, additional['TNM_IMP_CUSTOMER_CONTRACT'].nrows):
-                cross_dock[additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2)] = additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 7)
-        except KeyError:
-            pass
-        finally:
-            for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):
-                cross_dock[selected['backup_7'].sheet_by_index(0).cell_value(row, 2)] = selected['backup_7'].sheet_by_index(0).cell_value(row, 7)
 
-        try:
-            if cross_dock[master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2)] == 'Y':
-                customer_code = []
-                for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-                    if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == selected['backup_0'].sheet_by_index(0).cell_value(row, 7):
-                        customer_code.append(selected['backup_0'].sheet_by_index(0).cell_value(row, 4))
+        # --------------------------- REMOVED AFTER INTRODUCTION OF NO IMP WH UNPACK FLAG --------------------------- #
 
-                matches_3 = 0
-                for code in customer_code:
-                    if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3) == code:
-                        matches_3 += 1
+        # # If Customer Contract cross dock flag = Y, all parts in the module group must be from the same customer
+        # cross_dock = {}
+        # try:
+        #     for row in range(10, additional['TNM_IMP_CUSTOMER_CONTRACT'].nrows):
+        #         cross_dock[additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 2)] = additional['TNM_IMP_CUSTOMER_CONTRACT'].cell_value(row, 7)
+        # except KeyError:
+        #     pass
+        # finally:
+        #     for row in range(10, selected['backup_7'].sheet_by_index(0).nrows):
+        #         cross_dock[selected['backup_7'].sheet_by_index(0).cell_value(row, 2)] = selected['backup_7'].sheet_by_index(0).cell_value(row, 7)
+        #
+        # try:
+        #     if cross_dock[master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2)] == 'Y':
+        #         customer_code = []
+        #         for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
+        #             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == selected['backup_0'].sheet_by_index(0).cell_value(row, 7):
+        #                 customer_code.append(selected['backup_0'].sheet_by_index(0).cell_value(row, 4))
+        #
+        #         matches_3 = 0
+        #         for code in customer_code:
+        #             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3) == code:
+        #                 matches_3 += 1
+        #
+        #         if matches_3 == len(customer_code):
+        #             print ('Module Group Code check 2 --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+        #             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(customer_code)), 'Crossdock = Y, Parts in Module Group all same Customer Code')
+        #         else:
+        #             print ('Module Group Code check 2 --- Fail (Not same customer in crossdock module group)')
+        #             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(customer_code)), 'Crossdock = Y, Parts in Module Group not the same Customer Code')
+        #     else:
+        #         print ('Module Group Code check 2 --- Pass (%s Crossdock Flag == N)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
+        #         update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Crossdock = N, no check required')
+        # except KeyError:
+        #     print ('Module Group Code check 2 --- Fail (Customer Contract not found)')
+        #     update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Customer Contract not found in Customer Contract Master or system')
 
-                if matches_3 == len(customer_code):
-                    print ('Module Group Code check 2 --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(customer_code)), 'Crossdock = Y, Parts in Module Group all same Customer Code')
-                else:
-                    print ('Module Group Code check 2 --- Fail (Not same customer in crossdock module group)')
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(customer_code)), 'Crossdock = Y, Parts in Module Group not the same Customer Code')
-            else:
-                print ('Module Group Code check 2 --- Pass (%s Crossdock Flag == N)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Crossdock = N, no check required')
-        except KeyError:
-            print ('Module Group Code check 2 --- Fail (Customer Contract not found)')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Customer Contract not found in Customer Contract Master or system')
+        # --------------------------- REMOVED AFTER INTRODUCTION OF NO IMP WH UNPACK FLAG --------------------------- #
 
         # If Module Group is single, Module Group Code customer must match with Customer Code
         module_group_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
