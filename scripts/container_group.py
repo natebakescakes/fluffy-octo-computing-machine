@@ -543,10 +543,10 @@ def container_group(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', destination_port, shipping_route_list, 'Corresponding Shipping Routes of TTC Contracts (in TTC Contract Master) of Module Groups (in CCD) of Container Group do not match any Shipping Routes in Shipping Calendar Master')
         elif all(destination_port == x for x in port_list):
             print ('Destination Port check --- Pass')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', destination_port, port_list, 'Destination Port matches Shipping Calendar Exp Port')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', destination_port, port_list, 'Destination Port matches Shipping Calendar Imp Port')
         else:
             print ('Destination Port check --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', destination_port, port_list, 'Destination Port does not match Shipping Calendar Exp Port')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', destination_port, port_list, 'Destination Port does not match Shipping Calendar Imp Port')
 
     # Container Type Code must be found in Container Type Master
     def container_group_container_type(cell_row, cell_col, new_mod):
