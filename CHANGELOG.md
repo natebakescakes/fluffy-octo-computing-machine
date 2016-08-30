@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0.5] - TBC
 ### Added
 - Added Submitted MRS vs Temp Folder check, use --crosscheck flag (currently only checks values)
+- Added check in Customer Contract Details/Customer Parts Master to check Customer Parts Name for non-ascii characters
+- Added check in Supplier Parts Master to check Supplier Parts Name for non-ascii characters
 
 ### Changed
 - Removed pre-SRBQ Apply Date and Non-English Supplier Parts Name support
@@ -11,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Customer Parts Master: Orderlot Apply Date will now prompt warning if 1st of current month
 - Changed wording of Customer Contract Details: Supplier Code check
 - Account for possibility that TTC Contract/Module Group check will not have any active parts
+- Account for Exp WH Code when checking Module Type
 
 ### Fixed
 - Fixed Customer Contract Details: Customer Contract 3 check issue status
@@ -23,6 +26,7 @@ All notable changes to this project will be documented in this file.
 - Cleaned up Customer Contract: WEST check, fix error
 - Fixed error message of Container Group: Destination Port check
 - Fixed Customer Contract Details: Duplicate Part check
+- Enabled Customer Contract Details: Customer Part Name check 1
 
 ## [1.0.4] - 2016-05-27
 ### Added

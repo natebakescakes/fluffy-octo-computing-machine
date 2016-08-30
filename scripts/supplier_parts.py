@@ -265,6 +265,18 @@ def supplier_parts(master_files, path):
             print ('Supplier Back No. check --- Pass (No need to fill)')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2), 'Supplier Back No. need not be filled in')
 
+
+    # Check if part name is non-english
+    def supplier_parts_name(cell_row, cell_col, new_mod):
+        try:
+            master_files['xl_sheet_main'].cell_value(cell_row, cell_col).encode('ascii')
+        except UnicodeEncodeError:
+            print ('Supplier Parts Name check --- Fail (Non-english characters within)')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Non-english characters within')
+        else:
+            print ('Supplier Parts Name check --- Pass (No special characters)')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'No special characters')
+
     # Must be in Region Master and match with Supplier Code
     def supplier_parts_exp_country(cell_row, cell_col, new_mod):
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) in region_master:
@@ -764,6 +776,7 @@ def supplier_parts(master_files, path):
                 supplier_parts_part_no_2(row, 2, 'NEW')
                 supplier_parts_west_part_master(row, 2, 'NEW')
                 supplier_parts_back_no(row, 5, 'NEW')
+                supplier_parts_name(row, 6, 'NEW')
                 supplier_parts_exp_country(row, 8, 'NEW')
                 supplier_parts_next_srbq(row, 10, 'NEW')
                 supplier_parts_srbq_apply_date(row, 11, 'NEW')
@@ -793,6 +806,9 @@ def supplier_parts(master_files, path):
                             # Mod: Supplier Back No.
                             if col+2 == 5:
                                 supplier_parts_back_no(row, col+2, 'MOD')
+                            # Mod: Supplier Parts Name
+                            if col+2 == 6:
+                                supplier_parts_name(row, col+2, 'MOD')
                             # Mod: Exp Country
                             if col+2 == 8:
                                 supplier_parts_exp_country(row, col+2, 'MOD')
@@ -812,7 +828,7 @@ def supplier_parts(master_files, path):
                             if col+2 == 17:
                                 supplier_parts_box_m3(row, col+2, 'MOD')
                             # Mod: optional columns
-                            if (any(col+2 == x for x in (4, 6, 7, 18, 19))):
+                            if (any(col+2 == x for x in (4, 7, 18, 19))):
                                 print ('There is no programmed check for %s' % columns[col+2])
                                 update_df('MOD', columns[col+2], row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(row, col+2), 'NA', 'No programmed check')
 

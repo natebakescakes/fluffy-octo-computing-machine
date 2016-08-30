@@ -1213,26 +1213,49 @@ def customer_contract_details(master_files, path):
         return True
 
     def customer_contract_details_customer_part_name(cell_row, cell_col, new_mod):
+        part_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)
+        customer_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)
+
         if new_mod == 'NEW':
             customer_parts_parts_name = [] # tuple(P/N, Customer Code, Part Name)
             for row in range(9, selected['backup_2'].sheet_by_index(0).nrows):
-                customer_parts_parts_name.append((selected['backup_2'].sheet_by_index(0).cell_value(row, 2), selected['backup_2'].sheet_by_index(0).cell_value(row, 3), selected['backup_2'].sheet_by_index(0).cell_value(row, 5)))
+                if selected['backup_2'].sheet_by_index(0).cell_value(row, 2) == part_no and \
+                    selected['backup_2'].sheet_by_index(0).cell_value(row, 3) == customer_code:
+                    customer_parts_parts_name.append(
+                        (selected['backup_2'].sheet_by_index(0).cell_value(row, 2),
+                        selected['backup_2'].sheet_by_index(0).cell_value(row, 3),
+                        selected['backup_2'].sheet_by_index(0).cell_value(row, 5))
+                    )
 
             try:
                 for row in range(9, additional['TNM_CUSTOMER_PARTS_MASTER'].nrows):
-                    if additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 0) == 'NEW':
-                        customer_parts_parts_name.append((additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2), additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3), additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 5)))
+                    if additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 0) == 'NEW' and \
+                        additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2) == part_no and \
+                        additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3) == customer_code:
+                        customer_parts_parts_name.append(
+                            (additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2),
+                            additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3),
+                            additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 5))
+                        )
+                    # If Customer Parts Master is MOD part
                     else:
                         for tuple in customer_parts_parts_name:
-                            if additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2) == tuple[0] and additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3) == tuple[1]:
+                            if additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2) == tuple[0] and \
+                                additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3) == tuple[1]:
                                 customer_parts_parts_name.remove(tuple)
-                        customer_parts_parts_name.append((additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2), additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3), additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 5)))
+                                customer_parts_parts_name.append(
+                                    (additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 2),
+                                    additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 3),
+                                    additional['TNM_CUSTOMER_PARTS_MASTER'].cell_value(row, 5))
+                                )
             except KeyError:
                 pass
 
-            for tuple in customer_parts_parts_name:
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1) == tuple[0] and master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3) == tuple[1]:
-                    parts_name_ref = tuple[2]
+            try:
+                parts_name_ref = list(set(customer_parts_parts_name))[0][2]
+            except IndexError:
+                print ('Customer Parts Name check --- Fail')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Cannot find Customer Part Name in Customer Parts Master')
 
             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == parts_name_ref:
                 print ('Customer Parts Name check --- Pass')
@@ -1244,6 +1267,17 @@ def customer_contract_details(master_files, path):
         if new_mod == 'MOD':
             print ('Customer Contract Part Name check --- Fail (Cannot be modified in Customer Contract Details)')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Customer Part Name cannot be modified in Customer Contract Details')
+
+    # Check if part name is non-english
+    def customer_contract_details_customer_part_name_2(cell_row, cell_col, new_mod):
+        try:
+            master_files['xl_sheet_main'].cell_value(cell_row, cell_col).encode('ascii')
+        except UnicodeEncodeError:
+            print ('Customer Parts Name check 2 --- Fail (Non-english characters within)')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Non-english characters within')
+        else:
+            print ('Customer Parts Name check 2 --- Pass (No special characters)')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'No special characters')
 
     def customer_contract_details_discontinue_mod(cell_row, cell_col, new_mod):
         part_and_contract_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-5) + master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3)
@@ -1484,6 +1518,8 @@ def customer_contract_details(master_files, path):
             if str(master_files['xl_sheet_main'].cell_value(row, 0)).strip(' ') == 'NEW':
                 check_maximum_length(row, 'NEW')
                 check_compulsory_fields(row, 'NEW')
+                customer_contract_details_customer_part_name(row, 2, 'NEW')
+                customer_contract_details_customer_part_name_2(row, 2, 'NEW')
                 customer_contract_details_duplicate_key(row, 3, 'NEW')
                 customer_contract_details_part_no_1(row, 3, 'NEW')
                 customer_contract_details_part_no_2(row, 3, 'NEW')

@@ -919,6 +919,17 @@ def customer_parts(master_files, path):
                 print ('Parts Master WEST check --- Fail')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no + ', ' + import_office_code, company_code_list, 'Company Code not registered in Parts Master, please add MOD row in Parts Master to include Company Code')
 
+    # Check if part name is non-english
+    def customer_parts_name(cell_row, cell_col, new_mod):
+        try:
+            master_files['xl_sheet_main'].cell_value(cell_row, cell_col).encode('ascii')
+        except UnicodeEncodeError:
+            print ('Customer Parts Name check --- Fail (Non-english characters within)')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Non-english characters within')
+        else:
+            print ('Customer Parts Name check --- Pass (No special characters)')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'No special characters')
+
     def customer_parts_discontinued(cell_row, cell_col):
         part_no_customer_code = PRIMARY_KEY_1 + PRIMARY_KEY_2
         discontinue_list = []
@@ -1056,6 +1067,7 @@ def customer_parts(master_files, path):
                 customer_parts_part_no_1(row, 2, 'NEW')
                 customer_parts_part_no_2(row, 2, 'NEW')
                 customer_parts_part_no_3(row, 2, 'NEW')
+                customer_parts_name(row, 5, 'NEW')
                 customer_parts_west_part_master(row, 2, 'NEW')
                 customer_parts_imp_hs_code(row, 6, 'NEW')
                 customer_parts_imp_country(row, 7, 'NEW')
@@ -1089,6 +1101,9 @@ def customer_parts(master_files, path):
                             if (any(col+2 == x for x in (2, 3, 10))):
                                 print ('%s cannot be modded' % columns[col+2])
                                 update_df('MOD', columns[col+2], row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(row, col+2), 'NA', 'Cannot be modded')
+                            # Mod: Customer Parts Name
+                            if col+2 == 5:
+                                customer_parts_name(row, 5, 'MOD')
                             # Mod: Imp HS Code
                             if col+2 == 6:
                                 customer_parts_imp_hs_code(row, 6, 'MOD')
@@ -1100,7 +1115,10 @@ def customer_parts(master_files, path):
                                 customer_parts_west_invoice(row, 9, 'MOD')
                             # Mod: Next_SPQ, Orderlot
                             if (any(col+2 == x for x in (11, 12))):
-                                customer_parts_next_spq(row, 11, 'MOD')
+                                if paired_parts_check_cycle == 0:
+                                    customer_parts_next_spq(row, 11, 'MOD')
+                                    customer_parts_paired_parts(row, 19, 'MOD')
+                                    paired_parts_check_cycle += 1
                             # Mod: Orderlot Apply Date
                             if col+2 == 13:
                                 customer_parts_ol_apply_date_mod(row, 13, 'MOD')
@@ -1126,7 +1144,7 @@ def customer_parts(master_files, path):
                                 customer_parts_inner_packing_time_mod(row, 23, 'MOD')
                                 customer_parts_inner_packing_time(row, 23, 'MOD')
                             # Mod: optional columns
-                            if (any(col+2 == x for x in (4, 5, 24, 25, 26))):
+                            if (any(col+2 == x for x in (4, 24, 25, 26))):
                                 print ('There is no programmed check for %s' % columns[col+2])
                                 update_df('MOD', columns[col+2], row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(row, col+2), 'NA', 'No programmed check')
 
