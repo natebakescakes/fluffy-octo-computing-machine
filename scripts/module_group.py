@@ -360,9 +360,12 @@ def module_group(master_files, path):
 
     # Must be found in Module Type Master
     def module_group_module_type(cell_row, cell_col, new_mod):
+        warehouse_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)
+
         module_type_list = []
         for row in range(9, selected['backup_16'].sheet_by_index(0).nrows):
-            if selected['backup_16'].sheet_by_index(0).cell_value(row, 17) == 'N':
+            if selected['backup_16'].sheet_by_index(0).cell_value(row, 17) == 'N' and \
+                selected['backup_16'].sheet_by_index(0).cell_value(row, 2) == warehouse_code:
                 module_type_list.append(selected['backup_16'].sheet_by_index(0).cell_value(row, 3))
 
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) in module_type_list:
@@ -370,7 +373,7 @@ def module_group(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Module Type found in Module Type Master')
         else:
             print ('Module Type check --- Fail')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Module Type not found in Module Type Master')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), warehouse_code, 'Module Type not found in Module Type Master or Wrong Exp WH Code')
 
     # Must be found in Warehouse Master
     def module_group_warehouse(cell_row, cell_col, new_mod):
