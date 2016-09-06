@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Added Submitted MRS vs Temp Folder check, use --crosscheck flag (currently only checks values)
 - Added check in Customer Contract Details/Customer Parts Master to check Customer Parts Name for non-ascii characters
 - Added check in Supplier Parts Master to check Supplier Parts Name for non-ascii characters
+- New payment terms registered (SC2016090025)
 
 ### Changed
 - Removed pre-SRBQ Apply Date and Non-English Supplier Parts Name support
