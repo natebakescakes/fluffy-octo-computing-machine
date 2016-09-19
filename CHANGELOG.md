@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - Fixed error message of Container Group: Destination Port check
 - Fixed Customer Contract Details: Duplicate Part check
 - Enabled Customer Contract Details: Customer Part Name check 1
+- IP Specs Apply Date properly checked when IP Specs is being modded
 
 ## [1.0.4] - 2016-05-27
 ### Added

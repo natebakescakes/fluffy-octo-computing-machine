@@ -1256,6 +1256,7 @@ def customer_contract_details(master_files, path):
             except IndexError:
                 print ('Customer Parts Name check --- Fail')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Cannot find Customer Part Name in Customer Parts Master')
+                return
 
             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == parts_name_ref:
                 print ('Customer Parts Name check --- Pass')

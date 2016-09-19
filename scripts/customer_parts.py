@@ -344,6 +344,11 @@ def customer_parts(master_files, path):
         if master_files['xl_sheet_main'].cell_value(cell_row, 0) == 'MOD' and master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == '':
             return
 
+        if master_files['xl_sheet_main'].cell_value(cell_row, 0) == 'NEW' and master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == '':
+            print ('SPQ check --- Fail (Next_SPQ should not be blank)')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Next SPQ should not be blank for NEW rows')
+            return
+
         spq = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
         orderlot = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1))
 
@@ -1083,6 +1088,7 @@ def customer_parts(master_files, path):
             # Conditional for MOD parts
             else:
                 paired_parts_check_cycle = 0
+                ip_specs_check_cyle = 0
                 cols_to_check = get_mod_columns(row)
                 if len(cols_to_check) != 0:
                     print('User wishes to MOD the following columns:')
@@ -1125,12 +1131,15 @@ def customer_parts(master_files, path):
                             # Mod: IP Specs
                             if (any(col+2 == x for x in (14, 15, 16))):
                                 customer_parts_ip_specs(row, 14, 'MOD')
+                                if ip_specs_check_cyle == 0:
+                                    customer_parts_ip_apply_date_mod(row, 18, 'MOD')
+                                    ip_specs_check_cyle += 1
                             # Mod: IP Gross Weight
                             if any(col+2 == x for x in (11, 17)):
                                 customer_parts_gross_weight(row, 17, 'MOD')
-                            # Mod: IP Specs Apply Date
-                            if col+2 == 18:
-                                customer_parts_ip_apply_date_mod(row, 18, 'MOD')
+                                if ip_specs_check_cyle == 0:
+                                    customer_parts_ip_apply_date_mod(row, 18, 'MOD')
+                                    ip_specs_check_cyle += 1
                             # Mod: Paired Parts
                             if (any(col+2 == x for x in (19, 20, 21))):
                                 if paired_parts_check_cycle == 0:
