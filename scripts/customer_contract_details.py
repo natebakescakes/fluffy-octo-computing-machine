@@ -914,7 +914,7 @@ def customer_contract_details(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(ttc_contract_list)), 'All parts in 1 Module Group Code have same TTC Contract No.')
         elif len(list(set(ttc_contract_list))) == 0:
             print ('TTC Contract No. check 3 --- Warning (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(ttc_contract_list)), 'All active parts have been discontinued, please check manually')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(ttc_contract_list)), 'All active parts in Module Group have been discontinued, please check manually')
         else:
             print ('TTC Contract No. check 3 --- Fail (Different TTC Contract No. in same Module Group)')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_details, 'All parts in 1 Module Group Code do not have same TTC Contract No.')
@@ -1298,7 +1298,7 @@ def customer_contract_details(master_files, path):
 
         # Change from 'Y' to 'N' (Revive)
         elif master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == 'N':
-            if (any(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3).find(x) != -1 for x in ('0TBSM', 'TBSJ', 'TBSJ2', 'TBJ1', 'TBSQ', 'TBSR'))):
+            if (any(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3).find(x) != -1 for x in ('0TBSM', 'TBSJ', 'TBSJ2', 'TBSJ3', 'TBSJ4', 'TBJ1', 'TBSQ', 'TBSR'))):
                 supplier_parts_back = {}
                 for row in range(9, selected['backup_3'].sheet_by_index(0).nrows):
                     # supplier_parts_back = [(concat(part no. + supplier code), supplier back no.), ...]
