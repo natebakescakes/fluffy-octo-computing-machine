@@ -798,26 +798,39 @@ def customer_parts(master_files, path):
         # Get concat key
         part_and_customer_code = master_files['xl_sheet_main'].cell_value(cell_row, 2) + master_files['xl_sheet_main'].cell_value(cell_row, 3)
 
+        # mod Specs
+        ip_specs_apply_date = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+        order_lot_apply_date = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-5)
+
+        new_length = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-4)
+        new_width = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3)
+        new_height = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2)
+        new_weight = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)
+
+        next_spq = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-7)
+
         # concat_specs_spq[concat_key] = (length, width, height)
         concat_specs_spq = {}
         for row in range(9, selected['backup_2'].sheet_by_index(0).nrows):
-            concat_specs_spq[selected['backup_2'].sheet_by_index(0).cell_value(row, 2) + selected['backup_2'].sheet_by_index(0).cell_value(row, 3)] = (selected['backup_2'].sheet_by_index(0).cell_value(row, 14), selected['backup_2'].sheet_by_index(0).cell_value(row, 15), selected['backup_2'].sheet_by_index(0).cell_value(row, 16))
+            concat_specs_spq[selected['backup_2'].sheet_by_index(0).cell_value(row, 2) + selected['backup_2'].sheet_by_index(0).cell_value(row, 3)] = (selected['backup_2'].sheet_by_index(0).cell_value(row, 14), selected['backup_2'].sheet_by_index(0).cell_value(row, 15), selected['backup_2'].sheet_by_index(0).cell_value(row, 16), selected['backup_2'].sheet_by_index(0).cell_value(row, 17), selected['backup_2'].sheet_by_index(0).cell_value(row, 18))
 
         backup_length = concat_specs_spq[part_and_customer_code][0]
         backup_width = concat_specs_spq[part_and_customer_code][1]
         backup_height = concat_specs_spq[part_and_customer_code][2]
+        backup_weight = concat_specs_spq[part_and_customer_code][3]
+        backup_specs_apply_date = concat_specs_spq[part_and_customer_code][4]
 
-        if (master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3) != backup_length or master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2) != backup_width or master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1) != backup_height) and master_files['xl_sheet_main'].cell_value(cell_row, cell_col-7) != '':
+        if (new_length != backup_length or new_width != backup_width or new_height != backup_height or new_weight != backup_weight) and next_spq != '':
             # Extract Date
             try:
-                apply_date = time.strptime(str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)),"%d %b %Y")
+                apply_date = time.strptime(str(ip_specs_apply_date),"%d %b %Y")
             except ValueError:
                 if master_files['xl_sheet_main'].cell_value(cell_row, cell_col).upper() == '<MRS UPLOAD DATE>':
                     print ('IP Specs Apply Date check --- Fail (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Date must be input if IP Specs are changed')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ip_specs_apply_date, 'NA', 'Date must be input if IP Specs are changed')
                 else:
                     print ('IP Specs Apply Date check --- Fail (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Check Date Format')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ip_specs_apply_date, 'NA', 'Check Date Format')
 
             # transform today into 1st of next month
             def add_month(current_date):
@@ -838,38 +851,41 @@ def customer_parts(master_files, path):
 
             if 'apply_date' in locals():
                 if apply_date == correct_apply_date:
-                    print ('IP Specs Apply Date check --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), time.strftime('%d %b %Y', correct_apply_date), 'Apply date is 1st of next month')
+                    print ('IP Specs Apply Date check --- Pass (%s)' % ip_specs_apply_date)
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ip_specs_apply_date, time.strftime('%d %b %Y', correct_apply_date), 'Apply date is 1st of next month')
                 # Else if apply date is current month and match with SPQ Apply Date --- Pass
-                elif apply_date == additional_order_apply_date and apply_date == time.strptime(str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col-5)),"%d %b %Y"):
+                elif apply_date == additional_order_apply_date and apply_date == time.strptime(str(order_lot_apply_date),"%d %b %Y"):
                     print ('IP Specs Apply Date check --- Pass')
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), time.strftime('%d %b %Y', additional_order_apply_date), 'Apply date is 1st of this month and match with SPQ/OL reflection')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ip_specs_apply_date, time.strftime('%d %b %Y', additional_order_apply_date), 'Apply date is 1st of this month and match with SPQ/OL reflection')
                 else:
                     print ('IP Specs Apply Date fail --- Fail (must be 1st of next month)')
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(time.strftime('%d %b %Y', correct_apply_date)) + ' or ' + str(time.strftime('%d %b %Y', additional_order_apply_date)), 'Apply Date should be 1st of current month or next month to match SPQ/OL reflection')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ip_specs_apply_date, str(time.strftime('%d %b %Y', correct_apply_date)) + ' or ' + str(time.strftime('%d %b %Y', additional_order_apply_date)), 'Apply Date should be 1st of current month or next month to match SPQ/OL reflection')
 
-        elif (master_files['xl_sheet_main'].cell_value(cell_row, cell_col-3) != backup_length or master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2) != backup_width or master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1) != backup_height) and master_files['xl_sheet_main'].cell_value(cell_row, cell_col-7) == '':
+        elif (new_length != backup_length or new_width != backup_width or new_height != backup_height or new_weight != backup_weight) and next_spq == '':
             # Extract Date
             try:
-                apply_date = time.strptime(str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)),"%d %b %Y")
+                apply_date = time.strptime(str(ip_specs_apply_date),"%d %b %Y")
             except ValueError:
                 if master_files['xl_sheet_main'].cell_value(cell_row, cell_col).upper() == '<MRS UPLOAD DATE>':
-                    print ('IP Specs Apply Date check --- Fail (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(time.strftime('%d %b %Y', datetime.date.today().timetuple())), 'Date must be today or any future date if IP Specs are changed and SPQ remains unchanged')
+                    print ('IP Specs Apply Date check --- Fail (%s)' % ip_specs_apply_date)
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ip_specs_apply_date, str(time.strftime('%d %b %Y', datetime.date.today().timetuple())), 'Date must be today or any future date if IP Specs are changed and SPQ remains unchanged')
                 else:
                     print ('IP Specs Apply Date check --- Fail (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Check Date Format')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ip_specs_apply_date, 'NA', 'Check Date Format')
 
             if 'apply_date' in locals():
                 if apply_date >= datetime.date.today().timetuple():
-                    print ('IP Specs Apply Date check --- Pass (%s)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(time.strftime('%d %b %Y', datetime.date.today().timetuple())), 'Apply date is today or future date')
+                    print ('IP Specs Apply Date check --- Pass (%s)' % ip_specs_apply_date)
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ip_specs_apply_date, str(time.strftime('%d %b %Y', datetime.date.today().timetuple())), 'Apply date is today or future date')
                 else:
                     print ('IP Specs Apply Date check --- Fail (Apply Date cannot be before upload date)')
-                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), str(time.strftime('%d %b %Y', datetime.date.today().timetuple())), 'Apply Date cannot be before upload date')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ip_specs_apply_date, str(time.strftime('%d %b %Y', datetime.date.today().timetuple())), 'Apply Date cannot be before upload date')
+        elif (new_length == backup_length or new_width == backup_width or new_height == backup_height or new_weight == backup_weight) and ip_specs_apply_date == backup_specs_apply_date:
+            print ('IP Specs Apply Date check --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ip_specs_apply_date, 'NA', 'IP Specs not changed')
         else:
             print ('IP Specs Apply Date check --- Fail (Do not change if IP specs are not changed)')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Do not change if IP specs are not changed')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ip_specs_apply_date, 'NA', 'Do not change if IP specs are not changed')
 
     # If possible, user should change IPT on screen
     # Next_SPQ must be input if IPT is changed
@@ -1137,6 +1153,11 @@ def customer_parts(master_files, path):
                             # Mod: IP Gross Weight
                             if any(col+2 == x for x in (11, 17)):
                                 customer_parts_gross_weight(row, 17, 'MOD')
+                                if ip_specs_check_cyle == 0:
+                                    customer_parts_ip_apply_date_mod(row, 18, 'MOD')
+                                    ip_specs_check_cyle += 1
+                            # Mod: IP Specs Apply Date
+                            if col+2 == 18:
                                 if ip_specs_check_cyle == 0:
                                     customer_parts_ip_apply_date_mod(row, 18, 'MOD')
                                     ip_specs_check_cyle += 1
