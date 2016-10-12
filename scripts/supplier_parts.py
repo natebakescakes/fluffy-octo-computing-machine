@@ -87,7 +87,7 @@ def supplier_parts(master_files, path):
                         validate_count += 1
                         continue
                     except ValueError:
-                        if any(col_index == x for x in (9, 14)): # optional column, can be blank
+                        if col_index == 11: # optional column, can be blank
                             if master_files['xl_sheet_main'].cell_value(cell_row, col_index) == '':
                                 validate_count += 1
                                 continue
@@ -249,6 +249,8 @@ def supplier_parts(master_files, path):
             'TH-0TBSM',
             'TH-TBSJ',
             'TH-TBSJ2',
+            'TH-TBSJ3',
+            'TH-TBSJ4',
             'TH-TBJ1',
             'TH-TBSQ',
             'TH-TBSR'
