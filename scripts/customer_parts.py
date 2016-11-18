@@ -447,9 +447,18 @@ def customer_parts(master_files, path):
 
     # IP Specs cannot be zero, cannot be too large (>1)
     def customer_parts_ip_specs(cell_row, cell_col, new_mod):
-        box_length = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)), 3)
-        box_width = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)), 3)
-        box_height = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)), 3)
+        try:
+            box_length = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)), 3)
+            box_width = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)), 3)
+            box_height = round(float(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)), 3)
+        except ValueError:
+            box_length = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+            box_width = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)
+            box_height = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)
+
+            print ('IP Specs check --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', 'L: ' + str(box_length) + ', W: ' + str(box_width) + ', H: ' + str(box_height), 'NA', "Something went wrong, please check format")
+            return
 
         if box_length == 0 or box_width == 0 or box_height == 0:
             print ('IP Specs check --- Fail (LWH cannot be 0)')
