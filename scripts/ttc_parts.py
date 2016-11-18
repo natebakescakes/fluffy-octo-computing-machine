@@ -312,10 +312,10 @@ def ttc_parts(master_files, path):
             else:
                 if 'S500' in gm_dict[ttc_part_no]['Company']:
                     print ('Global Master check 2 --- Fail\n(GM: %s Submitted %s)' % (gm_dict[ttc_part_no]['Old Part Number'], master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)))
-                    update_df(new_mod, columns[3], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), gm_dict[ttc_part_no]['Old Part Number'], 'Old Part No. discrepancy, JP-Sourcing Part')
+                    update_df(new_mod, columns[3], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), gm_dict[ttc_part_no]['Old Part Number'], 'Old Part No. discrepancy with GM, JP-Sourcing Part')
                 else:
                     print ('Global Master check 2 --- Fail\n(GM: %s Submitted %s)' % (gm_dict[ttc_part_no]['Old Part Number'], master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)))
-                    update_df(new_mod, columns[3], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), gm_dict[ttc_part_no]['Old Part Number'], 'Old Part No. discrepancy')
+                    update_df(new_mod, columns[3], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), gm_dict[ttc_part_no]['Old Part Number'], 'Old Part No. discrepancy with GM')
 
             # Check Display Parts No.
             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2) == gm_dict[ttc_part_no]['Display Part Number']:
@@ -324,10 +324,10 @@ def ttc_parts(master_files, path):
             else:
                 if 'S500' in gm_dict[ttc_part_no]['Company']:
                     print ('Global Master check 3 --- Fail')
-                    update_df(new_mod, columns[4], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), gm_dict[ttc_part_no]['Display Part Number'], 'Display Part No. discrepancy, JP-Sourcing Part')
+                    update_df(new_mod, columns[4], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), gm_dict[ttc_part_no]['Display Part Number'], 'Display Part No. discrepancy with GM, JP-Sourcing Part')
                 else:
                     print ('Global Master check 3 --- Fail')
-                    update_df(new_mod, columns[4], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), gm_dict[ttc_part_no]['Display Part Number'], 'Display Part No. discrepancy')
+                    update_df(new_mod, columns[4], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), gm_dict[ttc_part_no]['Display Part Number'], 'Display Part No. discrepancy with GM')
 
             # Check Parts Name
             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3) == gm_dict[ttc_part_no]['Part Name']:
@@ -336,10 +336,10 @@ def ttc_parts(master_files, path):
             else:
                 if 'S500' in gm_dict[ttc_part_no]['Company']:
                     print ('Global Master check 4 --- Fail')
-                    update_df(new_mod, columns[5], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), gm_dict[ttc_part_no]['Part Name'], 'Parts Name discrepancy, JP-Sourcing Part')
+                    update_df(new_mod, columns[5], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), gm_dict[ttc_part_no]['Part Name'], 'Parts Name discrepancy with GM, JP-Sourcing Part')
                 else:
                     print ('Global Master check 4 --- Fail')
-                    update_df(new_mod, columns[5], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), gm_dict[ttc_part_no]['Part Name'], 'Parts Name discrepancy')
+                    update_df(new_mod, columns[5], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), gm_dict[ttc_part_no]['Part Name'], 'Parts Name discrepancy with GM')
 
             # Check Unit of Measure
             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+12) == gm_dict[ttc_part_no]['Base Quantity Unit']:
@@ -347,7 +347,7 @@ def ttc_parts(master_files, path):
                 update_df(new_mod, columns[14], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+12), gm_dict[ttc_part_no]['Base Quantity Unit'], 'Unit of Measure match')
             else:
                 print ('Global Master check 5 --- Fail\n(GM: %s Submitted %s)' % (gm_dict[ttc_part_no]['Base Quantity Unit'], master_files['xl_sheet_main'].cell_value(cell_row, cell_col+12)))
-                update_df(new_mod, columns[14], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+12), gm_dict[ttc_part_no]['Base Quantity Unit'], 'Unit of Measure discrepancy, cannot be changed')
+                update_df(new_mod, columns[14], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+12), gm_dict[ttc_part_no]['Base Quantity Unit'], 'Unit of Measure discrepancy with GM, cannot be changed')
 
             # Check Company Code
             submitted_company_code = ['S566', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+6), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+13)]
@@ -357,7 +357,7 @@ def ttc_parts(master_files, path):
                 update_df(new_mod, 'Company Code', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', submitted_company_code, gm_dict[ttc_part_no]['Company'], 'Company Code match')
             else:
                 print ('Global Master check 5 --- Fail')
-                update_df(new_mod, 'Company Code', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', submitted_company_code, gm_dict[ttc_part_no]['Company'], 'Company Code discrepancy')
+                update_df(new_mod, 'Company Code', cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', submitted_company_code, gm_dict[ttc_part_no]['Company'], 'Company Code discrepancy with GM')
 
         else:
             print ('Global Master check 1 --- Fail (Part not found in Global Master)')
@@ -365,14 +365,45 @@ def ttc_parts(master_files, path):
 
     # Display Parts Numbers should be same as TTC Parts Number but with hyphen
     def ttc_parts_display_part(cell_row, cell_col, new_mod):
+        ttc_part_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2)
+        display_part_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
         correct_part_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col).replace('-','')
 
-        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2) == correct_part_no:
-            print ('Display Parts No. check --- Pass')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2), 'P/N with hyphen')
-        else:
-            print ('Display Parts No. check --- Fail (Does not follow recommended guideline)')
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), master_files['xl_sheet_main'].cell_value(cell_row, cell_col-2), 'Does not follow recommended guideline (P/N with hyphen)')
+        try:
+            # Replace NoneTypes with ''
+            global_master_dict[ttc_part_no]['Company'] = [s for s in global_master_dict[ttc_part_no]['Company'] if s != 'None' and s != '']
+
+            if 'S500' not in global_master_dict[ttc_part_no]['Company']:
+                if ttc_part_no == correct_part_no:
+                    print ('Display Parts No. check --- Pass')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', display_part_no, ttc_part_no, 'P/N with hyphen')
+                else:
+                    print ('Display Parts No. check --- Fail (Does not follow recommended guideline)')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', display_part_no, ttc_part_no, 'Does not follow recommended guideline, does not match with P/N')
+
+                if '-' in display_part_no:
+                    print ('Display Parts No. check --- Pass')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', display_part_no, ttc_part_no, 'P/N has hyphen')
+                else:
+                    print ('Display Parts No. check --- Fail (Does not follow recommended guideline)')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', display_part_no, ttc_part_no, 'Does not follow recommended guideline, does not have hyphen')
+            else:
+                print ('Display Parts No. check --- Pass (Display Parts No. of JP-Sourcing parts should not be changed)')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', display_part_no, ttc_part_no, 'Display Parts No. of JP-Sourcing parts should not be changed')
+        except KeyError:
+            if ttc_part_no == correct_part_no:
+                print ('Display Parts No. check --- Pass')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', display_part_no, ttc_part_no, 'P/N with hyphen')
+            else:
+                print ('Display Parts No. check --- Fail (Does not follow recommended guideline)')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', display_part_no, ttc_part_no, 'Does not follow recommended guideline, does not match with P/N')
+
+            if '-' in display_part_no:
+                print ('Display Parts No. check --- Pass')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', display_part_no, ttc_part_no, 'P/N has hyphen')
+            else:
+                print ('Display Parts No. check --- Fail (Does not follow recommended guideline)')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', display_part_no, ttc_part_no, 'Does not follow recommended guideline, does not have hyphen')
 
     # Check if part name is non-english
     def ttc_parts_part_name(cell_row, cell_col, new_mod):

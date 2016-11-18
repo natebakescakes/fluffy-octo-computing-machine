@@ -93,20 +93,26 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.set_defaults(check_single=False, crosscheck=False)
     parser.add_option("-s", "--single",
-                      action="store_true", dest="check_single",
+                      action="store_true", dest="check_single", default=False,
                       help="Check a single master sheet, default is all sheets")
     parser.add_option("-c", "--crosscheck",
-                      action="store_true", dest="crosscheck",
+                      action="store_true", dest="crosscheck", default=False,
                       help="Compare latest submitted MRS with Temp folder")
+    parser.add_option("-o", "--open", dest="QADB_no",
+                      help="Specify QADB code to search", metavar="QADB")
 
     (options, args) = parser.parse_args()
 
-    path = open_dialog()
+    # If QADB_no not specified
+    if options.QADB_no == None:
+        path = open_dialog()
 
-    if path == '':
-        print ('You haven\'t selected a file.')
-        os.system('pause')
-        sys.exit()
+        if path == '':
+            print ('You haven\'t selected a file.')
+            os.system('pause')
+            sys.exit()
+    else:
+        pass
 
     if len(os.listdir(os.path.join(path, '1) Submit'))) == 0:
         print ('The folder \'1) Submit\' is empty!')

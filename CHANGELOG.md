@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added check in Supplier Parts Master to check Supplier Parts Name for non-ascii characters
 - New payment terms registered (SC2016090025)
 - Add new Suppliers (TBSJ3, TBSJ4) that require Supplier Back No.
+- Added check to flag out Parts Master: Display Parts No. with no hyphen at all
 
 ### Changed
 - Removed pre-SRBQ Apply Date and Non-English Supplier Parts Name support
@@ -16,6 +17,10 @@ All notable changes to this project will be documented in this file.
 - Changed wording of Customer Contract Details: Supplier Code check
 - Account for possibility that TTC Contract/Module Group check will not have any active parts
 - Account for Exp WH Code when checking Module Type
+- No need to check Display Parts No. format if JP-sourcing
+- Re-did TTC Contract: Imp Consignee check
+- Added format check for Customer Parts: IP Specs check
+- Changed error message for GM issues
 
 ### Fixed
 - Fixed Customer Contract Details: Customer Contract 3 check issue status

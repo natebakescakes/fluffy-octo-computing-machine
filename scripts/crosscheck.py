@@ -33,24 +33,20 @@ def crosscheck(submitted_wb, temp_dir):
     if len(temp_sheets) == 0:
         print ('No Temp Sheets')
         return False
+
     elif len(submitted_sheets) == 0:
         print ('No Submitted Sheets')
         return False
 
     for temp_sheet, submitted_sheet in zip(temp_sheets, submitted_sheets):
-        if all(temp_sheet.cell_value(row, col) == submitted_sheet.cell_value(row, col) \
-            for row in range(9, submitted_sheet.nrows) \
-            for col in range(submitted_sheet.ncols)):
-            return True
-        else:
-            for row in range(9, submitted_sheet.nrows):
-                for col in range(submitted_sheet.ncols):
-                    if temp_sheet.cell_value(row, col) != submitted_sheet.cell_value(row, col):
-                        print (submitted_sheet.name,
-                            row+1,
-                            col+1,
-                            submitted_sheet.cell_value(row, col),
-                            temp_sheet.cell_value(row, col)
-                        )
+        for row in range(9, submitted_sheet.nrows):
+            for col in range(submitted_sheet.ncols):
+                if temp_sheet.cell_value(row, col) != submitted_sheet.cell_value(row, col):
+                    print (submitted_sheet.name,
+                        row+1,
+                        col+1,
+                        submitted_sheet.cell_value(row, col),
+                        temp_sheet.cell_value(row, col)
+                    )
 
-            return False
+        return False
