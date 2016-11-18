@@ -486,21 +486,18 @@ def ttc_contract(master_files, path):
         imp_accountee = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)
         imp_delivery_address = master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)
 
-        customer_list = []
+        import_customer_list = []
         for row in range(9, selected['backup_14'].sheet_by_index(0).nrows):
-            customer_list.append(selected['backup_14'].sheet_by_index(0).cell_value(row, 2))
+            if selected['backup_14'].sheet_by_index(0).cell_value(row, 2)[:2] == IMPORT_COUNTRY:
+                import_customer_list.append(selected['backup_14'].sheet_by_index(0).cell_value(row, 2))
 
         if all(x != 'SG:TTSPL' for x in (imp_consignee, imp_accountee, imp_delivery_address)):
-            if all(x in office_master for x in (imp_consignee, imp_accountee, imp_delivery_address)):
+            if all((x in office_master or x in import_customer_list) for x in (imp_consignee, imp_accountee, imp_delivery_address)):
                 print ('Imp Consignee check --- Pass')
-                update_df(new_mod, ', '.join([columns[20], columns[21], columns[22]]), cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS',', '.join([imp_consignee, imp_accountee, imp_delivery_address]), 'NA', 'Imp Consignee, Accountee and Delivery Address found in Office Master')
+                update_df(new_mod, ', '.join([columns[20], columns[21], columns[22]]), cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS',', '.join([imp_consignee, imp_accountee, imp_delivery_address]), 'NA', 'Imp Consignee, Accountee and Delivery Address found in Office Master or Customer Master of Imp Country')
             else:
-                if all(x in customer_list for x in (imp_consignee, imp_accountee, imp_delivery_address)) and all(x == IMPORT_COUNTRY for x in (imp_consignee[:2], imp_accountee[:2], imp_delivery_address[:2])):
-                    print ('Imp Consignee check --- Pass')
-                    update_df(new_mod, ', '.join([columns[20], columns[21], columns[22]]), cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS',', '.join([imp_consignee, imp_accountee, imp_delivery_address]), IMPORT_COUNTRY, 'Imp Consignee, Accountee and Delivery Address found in Customer Master of Imp Country')
-                else:
-                    print ('Imp Consignee check --- Fail')
-                    update_df(new_mod, ', '.join([columns[20], columns[21], columns[22]]), cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL',', '.join([imp_consignee, imp_accountee, imp_delivery_address]), IMPORT_COUNTRY, 'Imp Consignee, Accountee and Delivery Address not found in Customer Master of Imp Country or Office Master')
+                print ('Imp Consignee check --- Fail')
+                update_df(new_mod, ', '.join([columns[20], columns[21], columns[22]]), cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL',', '.join([imp_consignee, imp_accountee, imp_delivery_address]), IMPORT_COUNTRY, 'Imp Consignee, Accountee and Delivery Address not found in Customer Master of Imp Country or Office Master')
         else:
             print ('Imp Consignee check --- Fail')
             update_df(new_mod, ', '.join([columns[20], columns[21], columns[22]]), cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL',', '.join([imp_consignee, imp_accountee, imp_delivery_address]), 'NA', 'Imp Consignee, Accountee and Delivery Address should not be SG:TTSPL')
