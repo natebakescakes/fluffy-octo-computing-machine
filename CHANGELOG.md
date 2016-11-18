@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.0.5] - TBC
+## [1.1.1] - 2016-11-18
 ### Added
 - Added Submitted MRS vs Temp Folder check, use --crosscheck flag (currently only checks values)
 - Added check in Customer Contract Details/Customer Parts Master to check Customer Parts Name for non-ascii characters
@@ -36,7 +36,7 @@ All notable changes to this project will be documented in this file.
 - Enabled Customer Contract Details: Customer Part Name check 1
 - IP Specs Apply Date properly checked when IP Specs is being modded
 
-## [1.0.4] - 2016-05-27
+## [1.1] - 2016-05-27
 ### Added
 - New payment terms registered (SC2016010161)
 - Added check in revive parts to check whether Customer Contract No. has been discontinued
