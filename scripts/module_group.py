@@ -167,17 +167,20 @@ def module_group(master_files, path):
 
     # Module Group Code must be unique and in this format: ImpCtry(2)Number(3), e.g. MY012
     def module_group_code_check(cell_row, cell_col, new_mod):
+        module_group_code = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+
         comparison_list_1 = []
         for row in range(10, selected['backup_5'].sheet_by_index(0).nrows):
             comparison_list_1.append(selected['backup_5'].sheet_by_index(0).cell_value(row, 2))
 
-        if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) not in comparison_list_1:
+        if module_group_code not in comparison_list_1:
             print ('Module Group Code check 1 --- Pass')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', PRIMARY_KEY_1, 'NA', 'Module Group Code is unique')
         else:
+            # Module Group Code already exists, append current values for reference
             backup_row_contents = []
             for row in range(9, selected['backup_5'].sheet_by_index(0).nrows):
-                if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) == selected['backup_5'].sheet_by_index(0).cell_value(row, 2):
+                if module_group_code == selected['backup_5'].sheet_by_index(0).cell_value(row, 2):
                     for col in range(0, 13): # Hard Code column range
                         backup_row_contents.append(selected['backup_5'].sheet_by_index(0).cell_value(row, col))
 
@@ -202,12 +205,29 @@ def module_group(master_files, path):
 
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col)[:2] == import_country and len(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)[2:]) == 3:
             try:
+                # Test whether Module Group Code serial no. can transform to integer
                 int_transform = int(master_files['xl_sheet_main'].cell_value(cell_row, cell_col)[2:])
-                print ('Module Group Code check 2 --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', PRIMARY_KEY_1, import_country + ', ' + str(int_transform), 'Module Group Code in correct format and match Imp Country')
+
+                # Test whether Module Group Code is in running order
+                full_module_group_list = [selected['backup_5'].sheet_by_index(0).cell_value(row, 2) \
+                    for row in range(10, selected['backup_5'].sheet_by_index(0).nrows)]
+
+                for row in range(10, master_files['xl_sheet_main'].nrows):
+                    full_module_group_list.append(master_files['xl_sheet_main'].cell_value(row, 2))
+
+                # Check whether Module Group Code -1 exists already
+                if int_transform != 1 and \
+                    import_country + "{0:0=3d}".format(int_transform-1) in list(set(full_module_group_list)):
+                    print ('Module Group Code check 2 --- Pass')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', PRIMARY_KEY_1, import_country + ', ' + str(int_transform), 'Module Group Code in correct format, match Imp Country, in running order')
+                else:
+                    print ('Module Group Code check 2 --- Fail')
+                    update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', PRIMARY_KEY_1, import_country + ', ' + str(int_transform), 'Module Group Code not in running order')
+
             except ValueError:
                 print ('Module Group Code check 2 --- Fail')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', PRIMARY_KEY_1, 'NA', 'Incorrect format: ImpCtry(2)Number(3), e.g. MY012')
+
         else:
             print ('Module Group Code check 2 --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', PRIMARY_KEY_1, 'NA', 'Does not match Imp Country or incorrect format: ImpCtry(2)Number(3), e.g. MY012')

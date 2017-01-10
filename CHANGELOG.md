@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - TBA
+### Added
+- Added Module Group Code check to see if it is in sequential order
+
 ## [1.1.1] - 2016-11-18
 ### Added
 - Added Submitted MRS vs Temp Folder check, use --crosscheck flag (currently only checks values)
