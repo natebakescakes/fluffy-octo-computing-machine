@@ -880,6 +880,16 @@ def ttc_parts(master_files, path):
                     selected['backup_0'].sheet_by_index(0).cell_value(row, 8)
                 ))
 
+        try:
+            for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
+                if part_no == str(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3)):
+                    discontinue_list.append((
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8)
+                    ))
+        except KeyError:
+            pass
+
         if 'N' in [tuple[1] for tuple in discontinue_list]:
             print ('Discontinued check --- Pass')
             update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no, discontinue_list, 'Part has contract that has not been discontinued')

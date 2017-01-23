@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Added Module Group Code check to see if it is in sequential order
 
+### Fixed
+- Parts Master: Discontinued check considers submitted customer contract details
+
 ## [1.1.1] - 2016-11-18
 ### Added
 - Added Submitted MRS vs Temp Folder check, use --crosscheck flag (currently only checks values)
