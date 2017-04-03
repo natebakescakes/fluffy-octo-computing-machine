@@ -4,9 +4,11 @@ All notable changes to this project will be documented in this file.
 ## [1.1.2] - TBA
 ### Added
 - Added Module Group Code check to see if it is in sequential order
+- Added check in revive parts to check whether TTC Contract No. has been discontinued
 
 ### Fixed
 - Parts Master: Discontinued check considers submitted customer contract details
+- Fixed WEST Check for TTC Contract Master
 
 ## [1.1.1] - 2016-11-18
 ### Added

@@ -1387,6 +1387,46 @@ def customer_contract_details(master_files, path):
             print('Revive check (Customer Contract Discontinue) --- Fail')
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), customer_contract_no, 'Strange Error')
 
+    # Check if TTC Contract has been discontinued
+    def customer_contract_details_ttc_contract_4(cell_row, cell_col, new_mod):
+        ttc_contract_no = master_files['xl_sheet_main'].cell_value(cell_row, cell_col)
+        discontinue_indicator = master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1)
+
+        backup_ttc_contract_no = ()
+
+        for row in range(10, selected['backup_4'].sheet_by_index(0).nrows):
+            if selected['backup_4'].sheet_by_index(0).cell_value(row, 2) == ttc_contract_no:
+                backup_ttc_contract_no = (
+                    selected['backup_4'].sheet_by_index(0).cell_value(row, 2),
+                    selected['backup_4'].sheet_by_index(0).cell_value(row, 37)
+                )
+
+        try:
+            for row in range(9, additional['TNM_TTC_CONTRACT'].nrows):
+                if additional['TNM_TTC_CONTRACT'].cell_value(row, 2) == ttc_contract_no:
+                    backup_ttc_contract_no = (
+                        additional['TNM_TTC_CONTRACT'].cell_value(row, 2),
+                        additional['TNM_TTC_CONTRACT'].cell_value(row, 37)
+                    )
+        except KeyError:
+            pass
+
+        if backup_ttc_contract_no == ():
+            print('Revive check (TTC Contract Discontinue) --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ttc_contract_no, discontinue_indicator, 'Cannot find TTC Contract No.')
+        elif backup_ttc_contract_no[1] == 'N':
+            print('Revive check (TTC Contract Discontinue) --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ttc_contract_no, discontinue_indicator, 'TTC Contract is not discontinued')
+        elif backup_ttc_contract_no[1] == 'Y' and discontinue_indicator == 'N':
+            print('Revive check (TTC Contract Discontinue) --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ttc_contract_no, discontinue_indicator, 'TTC Contract has been discontinued, request user to revive TTC Contract on screen')
+        elif backup_ttc_contract_no[1] == 'Y' and discontinue_indicator == 'Y':
+            print('Revive check (TTC Contract Discontinue) --- Pass')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ttc_contract_no, discontinue_indicator, 'TTC Contract is being discontinued as well')
+        else:
+            print('Revive check (TTC Contract Discontinue) --- Fail')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ttc_contract_no, discontinue_indicator, 'Strange Error')
+
     # Print required masters for checking
 
     check_dict = {
@@ -1535,6 +1575,7 @@ def customer_contract_details(master_files, path):
                 customer_contract_details_ttc_contract_1(row, 9, 'NEW')
                 customer_contract_details_ttc_contract_2(row, 9, 'NEW')
                 customer_contract_details_ttc_contract_3(row, 9, 'NEW')
+                customer_contract_details_ttc_contract_4(row, 9, 'NEW')
                 customer_contract_details_ttc_contract_pk(row, 9, 'NEW')
                 customer_contract_details_exp(row, 10, 'NEW')
                 customer_contract_details_supplier_code(row, 11, 'NEW')
@@ -1558,6 +1599,7 @@ def customer_contract_details(master_files, path):
                         customer_contract_details_customer_contract_3(row, 5, 'MOD')
                         customer_contract_details_no_unpack(row, 7, 'MOD')
                         customer_contract_details_ttc_contract_3(row, 9, 'NEW')
+                        customer_contract_details_ttc_contract_4(row, 9, 'MOD')
 
                         # Column specific checks
                         for col in cols_to_check:
