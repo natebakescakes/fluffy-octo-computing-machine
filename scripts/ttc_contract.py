@@ -277,17 +277,17 @@ def ttc_contract(master_files, path):
             # west import section not blank, west import purchase no. not blank, import_forward_exchange T, O, S, blank
             if west_export_section != '' and west_export_sales_no != '' and any(export_forward_exchange == x for x in ('T', 'O', 'S', '')):
                 print ('WEST Export check --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_export_section, west_export_sales_no, export_forward_exchange]), EXPORT_COUNTRY, 'WEST Export fields filled in')
+                update_df(new_mod, columns[cell_col+2], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_export_section, west_export_sales_no, export_forward_exchange]), EXPORT_COUNTRY, 'WEST Export fields filled in')
             else:
                 print ('WEST Export check --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_export_section, west_export_sales_no, export_forward_exchange]), EXPORT_COUNTRY, 'WEST Export fields not filled in properly')
+                update_df(new_mod, columns[cell_col+2], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_export_section, west_export_sales_no, export_forward_exchange]), EXPORT_COUNTRY, 'WEST Export fields not filled in properly')
         else:
             if all(x == '' for x in (west_export_section, west_export_sales_no, export_forward_exchange)):
                 print ('WEST Export check --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_export_section, west_export_sales_no, export_forward_exchange]), EXPORT_COUNTRY, 'WEST Export fields blank for non-WEST Exp Country')
+                update_df(new_mod, columns[cell_col+2], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_export_section, west_export_sales_no, export_forward_exchange]), EXPORT_COUNTRY, 'WEST Export fields blank for non-WEST Exp Country')
             else:
                 print ('WEST Export check --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_export_section, west_export_sales_no, export_forward_exchange]), EXPORT_COUNTRY, 'WEST Export fields should be blank for non-WEST Exp Country')
+                update_df(new_mod, columns[cell_col+2], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_export_section, west_export_sales_no, export_forward_exchange]), EXPORT_COUNTRY, 'WEST Export fields should be blank for non-WEST Exp Country')
 
         # Check WEST Middle
         if master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10) == 'Y':
@@ -296,17 +296,17 @@ def ttc_contract(master_files, path):
             # west_middle_section_sales not blank west_middle_section_purchase not blank
             if west_middle_section_sales != '' and west_middle_section_purchase != '' and any(middle_forward_exchange_sales == x for x in ('T', 'O', 'S', '')) and any(middle_forward_exchange_purchase == x for x in ('T', 'O', 'S', '')):
                 print ('WEST Middle check --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'WEST Middle fields filled in')
+                update_df(new_mod, columns[cell_col+8], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'WEST Middle fields filled in')
             else:
                 print ('WEST Middle check --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'WEST Middle fields not filled in properly')
+                update_df(new_mod, columns[cell_col+8], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'WEST Middle fields not filled in properly')
         else:
             if all(x == '' for x in (west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase)):
                 print ('WEST Middle check --- Pass')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'WEST Middle fields blank for no Mid Country contract')
+                update_df(new_mod, columns[cell_col+8], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', ', '.join([west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'WEST Middle fields blank for no Mid Country contract')
             else:
                 print ('WEST Middle check --- Fail')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'WEST Middle fields should be blank for no Mid Country contract')
+                update_df(new_mod, columns[cell_col+8], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', ', '.join([west_middle_section_sales, west_middle_section_purchase, middle_forward_exchange_sales, middle_forward_exchange_purchase]), master_files['xl_sheet_main'].cell_value(cell_row, cell_col+10), 'WEST Middle fields should be blank for no Mid Country contract')
 
     # If middle country flag = Y, Exp currency, exp HS code output, exp incoterms, exp incoterms(port/city), exp cosignee, exp accounttee, and exp payment terms must be input
     def ttc_contract_middle_country(cell_row, cell_col, new_mod):
