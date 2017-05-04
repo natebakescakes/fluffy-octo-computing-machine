@@ -71,6 +71,14 @@ west_import = {
         'Availability Check Group': ['Z1', 'Z2', 'Z3'],
         'Purchase Group': 'MY1'
     },
+    'PH': {
+        'Office Code': 'S696',
+        'Section': ['PHK0'],
+        'Recommended Section': ['PHK0'],
+        'Material Tax Class': 1,
+        'Availability Check Group': ['Z1', 'Z2', 'Z3'],
+        'Purchase Group': 'PH1'
+    },
     'TH': {
         'Office Code': 'S626',
         'Section': ['THKE', 'THKI', 'THK1', 'THK2', 'THK3', 'THK4', 'THK5', 'THK6', 'THK7', 'THK8'],
@@ -86,6 +94,14 @@ west_import = {
         'Material Tax Class': 1,
         'Availability Check Group': ['Z1', 'Z2', 'Z3'],
         'Purchase Group': 'TW1'
+    },
+    'VN': {
+        'Office Code': 'S776',
+        'Section': ['VNK1'],
+        'Recommended Section': ['VNK1'],
+        'Material Tax Class': 1,
+        'Availability Check Group': ['Z1', 'Z2', 'Z3'],
+        'Purchase Group': 'VN1'
     }
 }
 
@@ -129,6 +145,14 @@ west_export = {
         'Material Tax Class': 1,
         'Availability Check Group': ['Z1', 'Z2', 'Z3'],
         'Purchase Group': 'MY1'
+    },
+    'PH': {
+        'Office Code': 'S696',
+        'Section': ['PHK0'],
+        'Recommended Section': ['PHK0'],
+        'Material Tax Class': 1,
+        'Availability Check Group': ['Z1', 'Z2', 'Z3'],
+        'Purchase Group': 'PH1'
     },
     'TH': {
         'Office Code': 'S626',
