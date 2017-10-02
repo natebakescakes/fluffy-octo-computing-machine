@@ -409,6 +409,37 @@ def build_out(master_files, path):
 
         return True
 
+    def build_out_discontinued(cell_row, cell_col):
+        part_no_customer_contract = PRIMARY_KEY_1 + PRIMARY_KEY_2
+        discontinue_list = []
+
+        for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
+            if part_no_customer_contract == str(selected['backup_0'].sheet_by_index(0).cell_value(row, 3)) + selected['backup_0'].sheet_by_index(0).cell_value(row, 5):
+                discontinue_list.append((
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
+                    selected['backup_0'].sheet_by_index(0).cell_value(row, 8)
+                ))
+
+        try:
+            for row in range(9, additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].nrows):
+                if part_no_customer_contract == str(additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3)) + additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5):
+                    discontinue_list.append((
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
+                        additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8)
+                    ))
+        except KeyError:
+            pass
+
+        if 'N' in [tuple[1] for tuple in discontinue_list] and 'Y' in [tuple[1] for tuple in discontinue_list]:
+            print ('Discontinued check --- Warning')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', part_no_customer_contract, discontinue_list, 'Part has been discontinued but is being revived')
+        elif 'N' in [tuple[1] for tuple in discontinue_list]:
+            print ('Discontinued check --- Pass')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no_customer_contract, discontinue_list, 'Part has not been discontinued')
+        else:
+            print ('Discontinued check --- Fail')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_no_customer_contract, discontinue_list, 'Part has been discontinued')
+
     print ('The following master files are required: ')
     for i, key in enumerate(required):
         print ('%d: %s' % (i, required.get(key)))
@@ -508,6 +539,7 @@ def build_out(master_files, path):
                         check_maximum_length(row, 'MOD')
                         check_compulsory_fields(row, 'MOD')
                         build_out_duplicate_key(row, 2, 'MOD')
+                        build_out_discontinued(row, 2)
 
                         for col in cols_to_check:
                             # Mod: Module Group Code
