@@ -5,10 +5,13 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Added Module Group Code check to see if it is in sequential order
 - Added check in revive parts to check whether TTC Contract No. has been discontinued
+- Added check in Buildout Master to check whether Customer Contract Detail has been discontinued
 - Added new WEST data for PH and VN
 
 ### Fixed
 - Parts Master: Discontinued check considers submitted customer contract details
+- Customer Parts Master: Discontinued check considers submitted customer contract details
+- Buildout Parts Master: Discontinued check considers submitted customer contract details
 - Fixed Exprt/Middle WEST Check error message for TTC Contract Master
 
 ## [1.1.1] - 2016-11-18
