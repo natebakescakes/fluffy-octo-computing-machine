@@ -295,6 +295,7 @@ def supplier_parts(master_files, path):
             print ('Exp country check --- Fail (%s is not found in region master)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), 'NA', 'Not found in region master')
 
+    # Does not take into account discontinued Customer Parts at the moment.
     def supplier_parts_next_srbq(cell_row, cell_col, new_mod):
         if new_mod == 'NEW':
             if master_files['xl_sheet_main'].cell_value(cell_row, cell_col) != '' and master_files['xl_sheet_main'].cell_value(cell_row, cell_col-1) == '':

@@ -606,6 +606,7 @@ def customer_parts(master_files, path):
             update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), comparison_list_1, 'Back No. is unique')
         else:
             # Should warn only if same exp country
+            # Should warn only if flagged P/N has not been discontinued
             supplier_part_exp_country = []
             for part_no in comparison_list_1:
                 for row in range(9, selected['backup_3'].sheet_by_index(0).nrows):
@@ -625,7 +626,7 @@ def customer_parts(master_files, path):
                     pass
 
             print ('Back No check --- Fail (%s is already in use, please confirm with user)' % master_files['xl_sheet_main'].cell_value(cell_row, cell_col))
-            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(supplier_part_exp_country)), 'Back No. already in use by another P/N. Please check with user')
+            update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), list(set(supplier_part_exp_country)), 'Back No. already in use by another P/N. Please check if P/N in same Exp Country, then whether P/N already discontinued before checking with user.')
 
     # IPT cannot be less than 1
     def customer_parts_inner_packing_time(cell_row, cell_col, new_mod):

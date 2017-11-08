@@ -432,7 +432,7 @@ def build_out(master_files, path):
 
         if 'N' in [tuple[1] for tuple in discontinue_list] and 'Y' in [tuple[1] for tuple in discontinue_list]:
             print ('Discontinued check --- Warning')
-            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', part_no_customer_contract, discontinue_list, 'Part has been discontinued but is being revived')
+            update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', part_no_customer_contract, discontinue_list, 'Part has been discontinued but is being revived, or currently being discontinued')
         elif 'N' in [tuple[1] for tuple in discontinue_list]:
             print ('Discontinued check --- Pass')
             update_df('MOD', columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_no_customer_contract, discontinue_list, 'Part has not been discontinued')

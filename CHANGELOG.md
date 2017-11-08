@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Added check in Buildout Master to check whether Customer Contract Detail has been discontinued
 - Added new WEST data for PH and VN
 
+### Changed
+- Changed Build-out master discontinued parts check comment.
+
 ### Fixed
 - Parts Master: Discontinued check considers submitted customer contract details
 - Customer Parts Master: Discontinued check considers submitted customer contract details
