@@ -359,13 +359,9 @@ def customer_contract_details(master_files, path):
 
         # Generate list of Customer Contract, Exp Countries, Supplier Contract based on submitted P/N + Customer Code key in system
         for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-            if part_and_customer_no == str(selected['backup_0'].sheet_by_index(0).cell_value(row,3) + selected['backup_0'].sheet_by_index(0).cell_value(row,4)):
+            if part_and_customer_no == str(selected['backup_0'].sheet_by_index(0).cell_value(row,3) + selected['backup_0'].sheet_by_index(0).cell_value(row,4)) and selected['backup_0'].sheet_by_index(0).cell_value(row,8) == 'N':
                 comparison_list_1.append(str(selected['backup_0'].sheet_by_index(0).cell_value(row,5)))
-
-            if part_and_customer_no == str(selected['backup_0'].sheet_by_index(0).cell_value(row,3) + selected['backup_0'].sheet_by_index(0).cell_value(row,4)):
                 comparison_list_2.append(str(selected['backup_0'].sheet_by_index(0).cell_value(row,10)))
-
-            if part_and_customer_no == str(selected['backup_0'].sheet_by_index(0).cell_value(row,3) + selected['backup_0'].sheet_by_index(0).cell_value(row,4)):
                 comparison_list_3.append(str(selected['backup_0'].sheet_by_index(0).cell_value(row,12)))
 
         matches_1, matches_2, matches_3 = 0, 0, 0
