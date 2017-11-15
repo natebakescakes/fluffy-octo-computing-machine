@@ -290,7 +290,8 @@ def module_group(master_files, path):
 
         customer_contract_details = []
         for row in range(9, selected['backup_0'].sheet_by_index(0).nrows):
-            if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code:
+            if selected['backup_0'].sheet_by_index(0).cell_value(row, 7) == module_group_code and \
+            selected['backup_0'].sheet_by_index(0).cell_value(row, 8) == 'N':
                 customer_contract_details.append((
                     selected['backup_0'].sheet_by_index(0).cell_value(row, 3),
                     selected['backup_0'].sheet_by_index(0).cell_value(row, 5),
@@ -305,7 +306,8 @@ def module_group(master_files, path):
                         additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5),
                         additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 9)
                     ))
-                elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD':
+                elif additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 7) == module_group_code and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 0) == 'MOD' and \
+                additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 8) == 'N':
                     for entry in customer_contract_details:
                         if additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 3) == entry[0] and additional['TNM_IMP_CUSTOMER_CONTRACT_DETAI'].cell_value(row, 5) == entry[1]:
                             customer_contract_details.remove(entry)

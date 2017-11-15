@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Buildout Parts Master: Discontinued check considers submitted customer contract details
 - Fixed Exprt/Middle WEST Check error message for TTC Contract Master
 - Customer Contract Details Master: Multiple Customer Contract check considers discontinued parts
+- Module Group Master: TTC Contract check considers discontinued parts
 
 ## [1.1.1] - 2016-11-18
 ### Added
