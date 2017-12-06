@@ -26,7 +26,7 @@ office_master = [
     'MY:TTMSB',
     'PH:TTPH',
     'PK:TTCKH',
-    'RULTTRUS',
+    'RU:TTRUS',
     'SG:TTSPL',
     'TH:TTTC',
     'TR:TTESA',
