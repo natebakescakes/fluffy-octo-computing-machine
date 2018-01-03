@@ -1034,7 +1034,7 @@ def customer_contract_details(master_files, path):
                     print ('Supplier Delivery pattern check --- Fail (Other fields not blank)')
                     update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col), ', '.join([str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)), str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)), str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3)), str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+4))]), 'DayWeek Specify, Week Specify, Month Specify or Day Specify not blank')
             elif input_to_check == '2':
-                day_array = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)).split(',')
+                day_array = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1)).strip().split(',')
                 matches_1 = 0
                 for day in day_array:
                     if (any(day == x for x in ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'))):
@@ -1052,7 +1052,7 @@ def customer_contract_details(master_files, path):
                     update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+1), 'NA', 'Mon,Tue,Wed,Thu,Fri,Sat separated by comma')
 
             elif input_to_check == '3':
-                num_array = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)).split(',')
+                num_array = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2)).strip().split(',')
                 matches_2 = 0
                 for num in num_array:
                     if (any(num == x for x in ('1', '2', '3', '4', '5'))):
@@ -1070,7 +1070,7 @@ def customer_contract_details(master_files, path):
                     update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+2), 'NA', '1,2,3,4,5 separated by comma')
 
             elif input_to_check == '4':
-                month_array = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3)).split(',')
+                month_array = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3)).strip().split(',')
                 matches_3 = 0
                 for month in month_array:
                     if (any(month == x for x in ('B', 'M', 'E'))):
@@ -1088,7 +1088,7 @@ def customer_contract_details(master_files, path):
                     update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', master_files['xl_sheet_main'].cell_value(cell_row, cell_col+3), 'NA', 'B,M,E separated by comma')
 
             elif input_to_check == '5':
-                special_array = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+4)).split(',')
+                special_array = str(master_files['xl_sheet_main'].cell_value(cell_row, cell_col+4)).strip().split(',')
                 matches_4 = 0
                 for special in special_array:
                     week, day = special.split(':')[0], special.split(':')[1]
