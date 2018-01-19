@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Changed Build-out master discontinued parts check comment.
 - Added strip() to all Customer Contract Details: Supplier Delivery Pattern checks
+- Added warning to Customer Contract Details: Discontinue check to manually check for pending orders
 
 ### Fixed
 - Parts Master: Discontinued check considers submitted customer contract details

@@ -1286,8 +1286,8 @@ def customer_contract_details(master_files, path):
                 model_bom_parts_list.append(selected['backup_9'].sheet_by_index(0).cell_value(row, 7) + selected['backup_9'].sheet_by_index(0).cell_value(row, 11))
 
             if part_and_contract_no not in model_bom_parts_list:
-                print ('Discontinue Indicator check --- Pass (Not in Model BOM)')
-                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'PASS', part_and_contract_no, 'NA', 'P/N not in Model BOM')
+                print ('Discontinue Indicator check --- Warning (Not in Model BOM)')
+                update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'WARNING', part_and_contract_no, 'NA', 'P/N not in Model BOM, please check if P/N has any pending orders in system')
             else:
                 print ('Discontinue Indicator check --- Fail (Still in Model BOM)')
                 update_df(new_mod, columns[cell_col], cell_row, PRIMARY_KEY_1, PRIMARY_KEY_2, 'FAIL', part_and_contract_no, 'NA', 'P/N still in Model BOM')
