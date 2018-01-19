@@ -8,6 +8,13 @@
     2. Type in `pip install -r requirements.txt`
 1. Navigate to `\scripts` and run `mct.py`
 
+## Packaging a new executable file
+1. Install PyInstaller
+    * Type in `pip install PyInstaller`
+1. Navigate to `\scripts` and type `PyInstaller mct.py --onefile`
+1. Retrieve `mct.exe` from `\scripts\dist`
+1. Delete `\build` and `\dist` folder from `\scripts`
+
 ## Updating Master Data
 1. Navigate to `\scripts\master_data`
 2. Various system masters are stored as Arrays in their own `.py` files
